@@ -1,0 +1,14 @@
+{
+  "animations": {
+    "imageSetRef": "char1.imageset",
+    "frameDuration": "150ms"
+  },
+  "position": {
+    "x": 100,
+    "y": 100
+  },
+  "colliderSize": {
+    "w": 18,
+    "h": 18
+  }
+}

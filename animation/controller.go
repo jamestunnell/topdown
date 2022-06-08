@@ -4,48 +4,37 @@ import (
 	"time"
 
 	"github.com/hajimehoshi/ebiten/v2"
-	"github.com/jamestunnell/topdown/sliceutil"
 )
 
 type Controller struct {
 	frameTag      string
-	frames        []*Frame
+	frameImages   Images
+	frameDur      time.Duration
 	currentIndex  int
 	currentOffset time.Duration
-	frameOffsets  []time.Duration
-	nextOffset    time.Duration
 }
 
 func NewController() *Controller {
 	return &Controller{
 		frameTag:      "",
-		frames:        []*Frame{},
+		frameImages:   Images{},
+		frameDur:      0,
 		currentIndex:  0,
 		currentOffset: 0,
-		frameOffsets:  []time.Duration{},
-		nextOffset:    0,
 	}
 }
 
-func (c *Controller) StartAnimation(frameTag string, frames []*Frame) bool {
-	n := len(frames)
+func (c *Controller) StartAnimation(tag string, images Images, frameDur time.Duration) bool {
+	n := len(images)
 	if n == 0 {
 		return false
 	}
 
-	offset := time.Duration(0)
-	framesToOffsets := func(f *Frame) time.Duration {
-		offset += f.Duration
-
-		return offset
-	}
-
-	c.frameTag = frameTag
-	c.frames = frames
+	c.frameTag = tag
+	c.frameImages = images
+	c.frameDur = frameDur
 	c.currentIndex = 0
 	c.currentOffset = 0
-	c.frameOffsets = sliceutil.Map(frames, framesToOffsets)
-	c.nextOffset = c.frameOffsets[0]
 
 	return true
 }
@@ -53,15 +42,13 @@ func (c *Controller) StartAnimation(frameTag string, frames []*Frame) bool {
 func (c *Controller) Update(delta time.Duration) {
 	c.currentOffset += delta
 
-	if c.currentOffset >= c.nextOffset {
-		if c.currentIndex == (len(c.frames) - 1) {
-			c.currentOffset = c.currentOffset - c.nextOffset
+	for c.currentOffset >= c.frameDur {
+		c.currentOffset -= c.frameDur
+
+		if c.currentIndex == (len(c.frameImages) - 1) {
 			c.currentIndex = 0
-			c.nextOffset = c.frameOffsets[0]
 		} else {
 			c.currentIndex++
-
-			c.nextOffset = c.frameOffsets[c.currentIndex]
 		}
 	}
 }
@@ -75,5 +62,5 @@ func (c *Controller) CurrentFrameIndex() int {
 }
 
 func (c *Controller) CurrentFrameImage() *ebiten.Image {
-	return c.frames[c.currentIndex].Image
+	return c.frameImages[c.currentIndex]
 }

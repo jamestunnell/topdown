@@ -2,7 +2,6 @@ package animation
 
 import (
 	"fmt"
-	"time"
 
 	"github.com/hajimehoshi/ebiten/v2"
 	"golang.org/x/exp/slices"
@@ -11,31 +10,29 @@ import (
 	"github.com/jamestunnell/topdown/imageset"
 )
 
-const PropertyNameFrameDurationSec = "frameDurationSec"
-
-func MakeFrames(frameTag string, frameDur time.Duration, imageSet *imageset.ImageSet) (Frames, error) {
-	frames := Frames{}
+func FrameImages(tag string, imageSet *imageset.ImageSet) (Images, error) {
+	frameImages := Images{}
 
 	for _, subImage := range imageSet.SubImages {
-		if slices.Contains(subImage.Tags, frameTag) {
+		if slices.Contains(subImage.Tags, tag) {
 			img, _, found := imageSet.SubImage(topdown.NewPixel(subImage.X, subImage.Y))
 			if !found {
 				err := fmt.Errorf("failed to find sub-image at (%d, %d)", subImage.X, subImage.Y)
 
-				return Frames{}, err
+				return Images{}, err
 			}
 
-			frames = append(frames, img)
+			frameImages = append(frameImages, img)
 		}
 	}
 
-	SortFramesTopBottomLeftRight(frames)
+	SortFramesTopBottomLeftRight(frameImages)
 
-	return frames, nil
+	return frameImages, nil
 }
 
-func SortFramesTopBottomLeftRight(frames Frames) {
-	slices.SortFunc(frames, func(a, b *ebiten.Image) bool {
+func SortFramesTopBottomLeftRight(frameImages Images) {
+	slices.SortFunc(frameImages, func(a, b *ebiten.Image) bool {
 		aMin := a.Bounds().Min
 		bMin := b.Bounds().Min
 

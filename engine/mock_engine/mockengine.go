@@ -8,7 +8,7 @@ import (
 	reflect "reflect"
 
 	gomock "github.com/golang/mock/gomock"
-	resource "github.com/jamestunnell/topdown/resource"
+	ebiten "github.com/hajimehoshi/ebiten/v2"
 )
 
 // MockEngine is a mock of Engine interface.
@@ -34,6 +34,18 @@ func (m *MockEngine) EXPECT() *MockEngineMockRecorder {
 	return m.recorder
 }
 
+// Draw mocks base method.
+func (m *MockEngine) Draw(arg0 *ebiten.Image) {
+	m.ctrl.T.Helper()
+	m.ctrl.Call(m, "Draw", arg0)
+}
+
+// Draw indicates an expected call of Draw.
+func (mr *MockEngineMockRecorder) Draw(arg0 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Draw", reflect.TypeOf((*MockEngine)(nil).Draw), arg0)
+}
+
 // Initialize mocks base method.
 func (m *MockEngine) Initialize() error {
 	m.ctrl.T.Helper()
@@ -48,16 +60,45 @@ func (mr *MockEngineMockRecorder) Initialize() *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Initialize", reflect.TypeOf((*MockEngine)(nil).Initialize))
 }
 
-// ResourceManager mocks base method.
-func (m *MockEngine) ResourceManager() resource.Manager {
+// Layout mocks base method.
+func (m *MockEngine) Layout(arg0, arg1 int) (int, int) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "ResourceManager")
-	ret0, _ := ret[0].(resource.Manager)
+	ret := m.ctrl.Call(m, "Layout", arg0, arg1)
+	ret0, _ := ret[0].(int)
+	ret1, _ := ret[1].(int)
+	return ret0, ret1
+}
+
+// Layout indicates an expected call of Layout.
+func (mr *MockEngineMockRecorder) Layout(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Layout", reflect.TypeOf((*MockEngine)(nil).Layout), arg0, arg1)
+}
+
+// Run mocks base method.
+func (m *MockEngine) Run() error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Run")
+	ret0, _ := ret[0].(error)
 	return ret0
 }
 
-// ResourceManager indicates an expected call of ResourceManager.
-func (mr *MockEngineMockRecorder) ResourceManager() *gomock.Call {
+// Run indicates an expected call of Run.
+func (mr *MockEngineMockRecorder) Run() *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ResourceManager", reflect.TypeOf((*MockEngine)(nil).ResourceManager))
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Run", reflect.TypeOf((*MockEngine)(nil).Run))
+}
+
+// Update mocks base method.
+func (m *MockEngine) Update() error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Update")
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// Update indicates an expected call of Update.
+func (mr *MockEngineMockRecorder) Update() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Update", reflect.TypeOf((*MockEngine)(nil).Update))
 }

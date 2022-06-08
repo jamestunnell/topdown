@@ -15,14 +15,15 @@ type Animations struct {
 	ImageSetRef   string
 	FrameDuration time.Duration
 
-	TaggedFrames map[string]Frames
+	TaggedImages map[string]Images
+	Controller   *Controller
 }
 
-type Frames = []*ebiten.Image
+type Images = []*ebiten.Image
 
 type AnimationsJSON struct {
 	ImageSetRef   string `json:"imageSetRef"`
-	FrameDuration string `json:"frameDuration,omitempty"`
+	FrameDuration string `json:"frameDuration"`
 }
 
 type Frame struct {
@@ -37,7 +38,7 @@ func NewAnimations(
 	return &Animations{
 		ImageSetRef:   imageSetRef,
 		FrameDuration: frameDur,
-		TaggedFrames:  map[string]Frames{},
+		TaggedImages:  map[string]Images{},
 	}
 }
 
@@ -65,11 +66,9 @@ func (anims *Animations) UnmarshalJSON(d []byte) error {
 
 	var frameDur time.Duration
 
-	if animsJSON.FrameDuration != "" {
-		frameDur, err = time.ParseDuration(animsJSON.FrameDuration)
-		if err != nil {
-			return fmt.Errorf("failed to parse frame duration '%s': %w", anims.FrameDuration, err)
-		}
+	frameDur, err = time.ParseDuration(animsJSON.FrameDuration)
+	if err != nil {
+		return fmt.Errorf("failed to parse frame duration '%s': %w", anims.FrameDuration, err)
 	}
 
 	anims.ImageSetRef = animsJSON.ImageSetRef
@@ -84,19 +83,30 @@ func (anims *Animations) Initialize(mgr resource.Manager) error {
 		return fmt.Errorf("failed to get '%s' from dependencies: %w", anims.ImageSetRef, err)
 	}
 
-	taggedFrames := map[string]Frames{}
+	taggedImages := map[string]Images{}
 	tags := is.Tags()
 
 	for _, tag := range tags {
-		frames, err := MakeFrames(tag, anims.FrameDuration, is)
+		frames, err := FrameImages(tag, is)
 		if err != nil {
 			return fmt.Errorf("failed to make frames for tag '%s': %w", tag, err)
 		}
 
-		taggedFrames[tag] = frames
+		taggedImages[tag] = frames
 	}
 
-	anims.TaggedFrames = taggedFrames
+	anims.TaggedImages = taggedImages
+
+	anims.Controller = NewController()
 
 	return nil
+}
+
+func (anims *Animations) Start(tag string) bool {
+	images, found := anims.TaggedImages[tag]
+	if !found {
+		return false
+	}
+
+	return anims.Controller.StartAnimation(tag, images, anims.FrameDuration)
 }

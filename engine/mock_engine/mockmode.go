@@ -9,6 +9,8 @@ import (
 
 	gomock "github.com/golang/mock/gomock"
 	ebiten "github.com/hajimehoshi/ebiten/v2"
+	topdown "github.com/jamestunnell/topdown"
+	engine "github.com/jamestunnell/topdown/engine"
 	resource "github.com/jamestunnell/topdown/resource"
 )
 
@@ -48,17 +50,17 @@ func (mr *MockModeMockRecorder) Draw(arg0 interface{}) *gomock.Call {
 }
 
 // Initialize mocks base method.
-func (m *MockMode) Initialize(arg0 resource.Manager) error {
+func (m *MockMode) Initialize(arg0 topdown.Size, arg1 resource.Manager) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Initialize", arg0)
+	ret := m.ctrl.Call(m, "Initialize", arg0, arg1)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // Initialize indicates an expected call of Initialize.
-func (mr *MockModeMockRecorder) Initialize(arg0 interface{}) *gomock.Call {
+func (mr *MockModeMockRecorder) Initialize(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Initialize", reflect.TypeOf((*MockMode)(nil).Initialize), arg0)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Initialize", reflect.TypeOf((*MockMode)(nil).Initialize), arg0, arg1)
 }
 
 // Layout mocks base method.
@@ -77,11 +79,12 @@ func (mr *MockModeMockRecorder) Layout(arg0, arg1 interface{}) *gomock.Call {
 }
 
 // Update mocks base method.
-func (m *MockMode) Update() error {
+func (m *MockMode) Update() (engine.Mode, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Update")
-	ret0, _ := ret[0].(error)
-	return ret0
+	ret0, _ := ret[0].(engine.Mode)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
 }
 
 // Update indicates an expected call of Update.

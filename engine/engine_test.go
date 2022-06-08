@@ -10,6 +10,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
+	"github.com/jamestunnell/topdown"
 	"github.com/jamestunnell/topdown/engine"
 	"github.com/jamestunnell/topdown/engine/mock_engine"
 	"github.com/jamestunnell/topdown/resource"
@@ -44,11 +45,12 @@ func TestEngineStartModeFailsToInit(t *testing.T) {
 		ResourcesDir: dir,
 		StartMode:    mode,
 		ExtraTypes:   []resource.Type{},
+		WindowSize:   topdown.NewSize(100, 100),
 	}
 
 	eng := engine.New(cfg)
 
-	mode.EXPECT().Initialize(gomock.Any()).Return(errors.New(""))
+	mode.EXPECT().Initialize(cfg.WindowSize, gomock.Any()).Return(errors.New(""))
 
 	assert.Error(t, eng.Initialize())
 }
@@ -67,11 +69,12 @@ func TestEngine(t *testing.T) {
 		ResourcesDir: dir,
 		StartMode:    mode,
 		ExtraTypes:   []resource.Type{},
+		WindowSize:   topdown.NewSize(200, 200),
 	}
 
 	eng := engine.New(cfg)
 
-	mode.EXPECT().Initialize(gomock.Any()).Return(nil)
+	mode.EXPECT().Initialize(cfg.WindowSize, gomock.Any()).Return(nil)
 
 	assert.NoError(t, eng.Initialize())
 }

@@ -67,15 +67,24 @@ func NewSystem(worldWidth, worldHeight float64) (System, error) {
 	se := cirno.NewVector(worldWidth, worldHeight)
 	sw := cirno.NewVector(0, worldHeight)
 
+	log.Info().
+		Float64("west", 0).
+		Float64("east", worldWidth).
+		Float64("north", 0).
+		Float64("south", worldHeight).
+		Msg("adding collision space boundaries")
+
 	var addLineErr error
 
-	addLine := func(a, b cirno.Vector) bool {
+	addLine := func(a, b cirno.Vector, id string) bool {
 		line, err := cirno.NewLine(a, b)
 
 		line.SetIdentity(ColliderShapeID)
 
 		// collides with anything
 		line.SetMask(^0)
+
+		line.SetData(id)
 
 		if err != nil {
 			addLineErr = fmt.Errorf("failed to make space boundary: %w", err)
@@ -92,7 +101,7 @@ func NewSystem(worldWidth, worldHeight float64) (System, error) {
 		return true
 	}
 
-	if !addLine(nw, ne) || !addLine(ne, se) || !addLine(se, sw) || !addLine(sw, nw) {
+	if !addLine(nw, ne, "north") || !addLine(ne, se, "east") || !addLine(se, sw, "south") || !addLine(sw, nw, "west") {
 		return nil, addLineErr
 	}
 
@@ -109,6 +118,8 @@ func NewSystem(worldWidth, worldHeight float64) (System, error) {
 func (s *system) Add(id string, x interface{}) {
 	if m, ok := x.(Movable); ok {
 		s.movables[id] = m
+
+		log.Info().Str("id", id).Msg("added movable")
 	}
 
 	if c, ok := x.(Collidable); ok {
@@ -126,6 +137,8 @@ func (s *system) Add(id string, x interface{}) {
 		s.space.Add(shape)
 
 		s.collidables[id] = c
+
+		log.Info().Str("id", id).Msg("added collidable")
 	}
 
 	if t, ok := x.(Triggerable); ok {
@@ -139,6 +152,8 @@ func (s *system) Add(id string, x interface{}) {
 		s.space.Add(shape)
 
 		s.triggerables[id] = t
+
+		log.Info().Str("id", id).Msg("added triggerable")
 	}
 }
 
@@ -198,6 +213,12 @@ func (s *system) MoveCollide(deltaSec float64) {
 		}
 
 		if len(shapes) > 0 {
+			log.Debug().
+				Str("id", id).
+				Float64("dX", moveDiff.X).
+				Float64("dY", moveDiff.Y).
+				Msg("collision detected")
+
 			moveDiff = c.ResolveCollision(moveDiff, shapes)
 		}
 
