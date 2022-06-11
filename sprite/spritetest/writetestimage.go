@@ -1,4 +1,4 @@
-package imagetest
+package spritetest
 
 import (
 	"image"

@@ -1,10 +1,9 @@
 package drawing
 
 import (
-	"image"
-
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/igrmk/treemap/v2"
+	"github.com/jamestunnell/topdown"
 	"github.com/rs/zerolog/log"
 )
 
@@ -13,7 +12,7 @@ import (
 type WorldSystem interface {
 	System
 
-	DrawWorld(visible image.Rectangle)
+	DrawWorld(visible topdown.Rectangle[float64])
 }
 
 type worldSystem struct {
@@ -60,7 +59,7 @@ func (s *worldSystem) Clear() {
 	}
 }
 
-func (s *worldSystem) DrawWorld(visible image.Rectangle) {
+func (s *worldSystem) DrawWorld(visible topdown.Rectangle[float64]) {
 	for it := s.layers.Iterator(); it.Valid(); it.Next() {
 		for _, d := range it.Value().Drawables {
 			d.WorldDraw(s.surface, visible)

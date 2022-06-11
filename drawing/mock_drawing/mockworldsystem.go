@@ -5,11 +5,11 @@
 package mock_drawing
 
 import (
-	image "image"
 	reflect "reflect"
 
 	gomock "github.com/golang/mock/gomock"
 	ebiten "github.com/hajimehoshi/ebiten/v2"
+	topdown "github.com/jamestunnell/topdown"
 )
 
 // MockWorldSystem is a mock of WorldSystem interface.
@@ -60,7 +60,7 @@ func (mr *MockWorldSystemMockRecorder) Clear() *gomock.Call {
 }
 
 // DrawWorld mocks base method.
-func (m *MockWorldSystem) DrawWorld(arg0 image.Rectangle) {
+func (m *MockWorldSystem) DrawWorld(arg0 topdown.Rectangle[float64]) {
 	m.ctrl.T.Helper()
 	m.ctrl.Call(m, "DrawWorld", arg0)
 }

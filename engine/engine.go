@@ -6,10 +6,9 @@ import (
 	"github.com/hajimehoshi/ebiten/v2"
 
 	"github.com/jamestunnell/topdown"
-	"github.com/jamestunnell/topdown/imageresource"
-	"github.com/jamestunnell/topdown/imageset"
 	"github.com/jamestunnell/topdown/registry"
 	"github.com/jamestunnell/topdown/resource"
+	"github.com/jamestunnell/topdown/sprite"
 	"github.com/jamestunnell/topdown/tilegrid"
 )
 
@@ -28,11 +27,11 @@ type engine struct {
 	resourceManager resource.Manager
 	// serviceRegistry service.Registry
 	mode       Mode
-	windowSize topdown.Size
+	windowSize topdown.Size[int]
 }
 
 type Config struct {
-	WindowSize   topdown.Size
+	WindowSize   topdown.Size[int]
 	Fullscreen   bool
 	ResourcesDir string
 	ExtraTypes   []resource.Type
@@ -53,13 +52,7 @@ func New(cfg *Config) Engine {
 }
 
 func (eng *engine) Initialize() error {
-	eng.typeRegistry.Add(imageresource.Types()...)
-
-	isType, err := imageset.NewType()
-	if err != nil {
-		return fmt.Errorf("failed to make imageset type: %w", err)
-	}
-	eng.typeRegistry.Add(isType)
+	eng.typeRegistry.Add(sprite.Types()...)
 
 	bgType, err := tilegrid.NewBackgroundType()
 	if err != nil {
@@ -113,8 +106,8 @@ func (eng *engine) Draw(screen *ebiten.Image) {
 
 func (eng *engine) Layout(w, h int) (int, int) {
 	w, h = eng.mode.Layout(w, h)
-	if w != int(eng.windowSize.Width) || h != int(eng.windowSize.Height) {
-		eng.windowSize = topdown.NewSize(float64(w), float64(h))
+	if w != eng.windowSize.Width || h != eng.windowSize.Height {
+		eng.windowSize = topdown.Sz[int](w, h)
 	}
 
 	return w, h

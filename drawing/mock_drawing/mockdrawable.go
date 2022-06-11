@@ -5,11 +5,11 @@
 package mock_drawing
 
 import (
-	image "image"
 	reflect "reflect"
 
 	gomock "github.com/golang/mock/gomock"
 	ebiten "github.com/hajimehoshi/ebiten/v2"
+	topdown "github.com/jamestunnell/topdown"
 )
 
 // MockWorldDrawable is a mock of WorldDrawable interface.
@@ -36,7 +36,7 @@ func (m *MockWorldDrawable) EXPECT() *MockWorldDrawableMockRecorder {
 }
 
 // WorldDraw mocks base method.
-func (m *MockWorldDrawable) WorldDraw(arg0 *ebiten.Image, arg1 image.Rectangle) {
+func (m *MockWorldDrawable) WorldDraw(arg0 *ebiten.Image, arg1 topdown.Rectangle[float64]) {
 	m.ctrl.T.Helper()
 	m.ctrl.Call(m, "WorldDraw", arg0, arg1)
 }

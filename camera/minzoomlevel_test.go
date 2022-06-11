@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"testing"
 
+	"github.com/jamestunnell/topdown"
 	"github.com/jamestunnell/topdown/camera"
 	"github.com/stretchr/testify/assert"
 )
@@ -16,7 +17,7 @@ func TestMinZoomLevel(t *testing.T) {
 
 func testMinZoomLevel(t *testing.T, w, h int, expected float64) {
 	t.Run(fmt.Sprintf("w=%d,h=%d", w, h), func(t *testing.T) {
-		actual := camera.MinZoomLevel(w, h)
+		actual := camera.MinZoomLevel(topdown.Sz(w, h))
 
 		assert.Equal(t, expected, actual)
 	})

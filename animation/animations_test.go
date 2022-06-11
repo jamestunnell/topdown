@@ -14,11 +14,11 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
+	"github.com/jamestunnell/topdown"
 	"github.com/jamestunnell/topdown/animation"
-	"github.com/jamestunnell/topdown/imageresource"
-	"github.com/jamestunnell/topdown/imageset"
 	"github.com/jamestunnell/topdown/jsonfile"
 	"github.com/jamestunnell/topdown/resource/restest"
+	"github.com/jamestunnell/topdown/sprite"
 )
 
 func TestAnimations(t *testing.T) {
@@ -32,25 +32,36 @@ func TestAnimations(t *testing.T) {
 	h := 128
 
 	// Break up the image into quadrants
-	subImages := []*imageset.SubImage{
-		{X: 0, Y: 0, Width: w / 2, Height: h / 2, Tags: []string{"idle"}},
-		{X: w / 2, Y: 0, Width: w / 2, Height: h / 2, Tags: []string{"idle"}},
-		{X: 0, Y: h / 2, Width: w / 2, Height: h / 2, Tags: []string{"walk"}},
-		{X: w / 2, Y: h / 2, Width: w / 2, Height: h / 2, Tags: []string{"walk"}},
+	sprites := []*sprite.Sprite{
+		{
+			Start: topdown.Pt(0, 0),
+			Size:  topdown.Sz(w/2, h/2),
+			Tags:  []string{"idle"},
+		},
+		{
+			Start: topdown.Pt(w/2, 0),
+			Size:  topdown.Sz(w/2, h/2),
+			Tags:  []string{"idle"},
+		},
+		{
+			Start: topdown.Pt(0, h/2),
+			Size:  topdown.Sz(w/2, h/2),
+			Tags:  []string{"walk"},
+		},
+		{
+			Start: topdown.Pt(w/2, h/2),
+			Size:  topdown.Sz(w/2, h/2),
+			Tags:  []string{"walk"},
+		},
 	}
 
 	// write a test image and test image set
-	path := writeTestImageSet(t, dir, w, h, subImages...)
+	path := writeTestImageSet(t, dir, w, h, sprites...)
 
 	imageSetRef := filepath.Base(path)
 	anims := animation.NewAnimations(imageSetRef, 20*time.Millisecond)
 
-	isType, err := imageset.NewType()
-
-	require.NoError(t, err)
-
-	types := append(imageresource.Types(), isType)
-	mgr := restest.SetupManager(t, dir, types...)
+	mgr := restest.SetupManager(t, dir, sprite.Types()...)
 
 	f, err := ioutil.TempFile(dir, "testanimations*.animations")
 
@@ -64,11 +75,11 @@ func TestAnimations(t *testing.T) {
 
 	require.NoError(t, anims2.Initialize(mgr))
 
-	assert.Len(t, anims2.TaggedFrames, 2)
-	assert.Contains(t, anims2.TaggedFrames, "idle")
-	assert.Contains(t, anims2.TaggedFrames, "walk")
-	assert.Len(t, anims2.TaggedFrames["idle"], 2)
-	assert.Len(t, anims2.TaggedFrames["walk"], 2)
+	assert.Len(t, anims2.TaggedImages, 2)
+	assert.Contains(t, anims2.TaggedImages, "idle")
+	assert.Contains(t, anims2.TaggedImages, "walk")
+	assert.Len(t, anims2.TaggedImages["idle"], 2)
+	assert.Len(t, anims2.TaggedImages["walk"], 2)
 
 	// f, err := ioutil.TempFile(dir, "testanimations*.animations")
 
@@ -82,17 +93,17 @@ func TestAnimations(t *testing.T) {
 	// assert.NotNil(t, a)
 }
 
-func writeTestImageSet(t *testing.T, dir string, w, h int, subImages ...*imageset.SubImage) string {
+func writeTestImageSet(t *testing.T, dir string, w, h int, sprites ...*sprite.Sprite) string {
 	imgPath := writeTestPNG(t, dir, w, h)
 	imgRef := filepath.Base(imgPath)
 
-	is := imageset.New(imgRef, subImages...)
+	ss := sprite.NewSpriteSet(imgRef, sprites...)
 
-	f, err := os.CreateTemp(dir, "testImgSet*.imageset")
+	f, err := os.CreateTemp(dir, "testSprites*.spriteset")
 
 	require.NoError(t, err)
 
-	require.NoError(t, jsonfile.Write(f.Name(), is))
+	require.NoError(t, jsonfile.Write(f.Name(), ss))
 
 	return f.Name()
 }

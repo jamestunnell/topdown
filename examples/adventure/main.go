@@ -28,7 +28,7 @@ func main() {
 		ResourcesDir: resourcesDir,
 		StartMode:    play,
 		ExtraTypes:   types,
-		WindowSize:   topdown.NewSize(800, 600),
+		WindowSize:   topdown.Sz(800, 600),
 		Fullscreen:   false,
 	}
 	eng := engine.New(cfg)

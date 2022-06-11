@@ -19,7 +19,7 @@ func NewBackgroundType() (resource.Type, error) {
 		TileGridSchemaStr,
 		topdown.VectorSchemaStr,
 		topdown.SizeSchemaStr,
-		topdown.PixelSchemaStr)
+		topdown.PointSchemaStr)
 	if err != nil {
 		return nil, fmt.Errorf("failed to make JSON schema: %w", err)
 	}

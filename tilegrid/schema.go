@@ -7,8 +7,8 @@ const TileGridSchemaStr = `{
   "type": "object",
   "required": ["minPosition", "tileSize", "tileDefs", "tileRows"],
   "properties": {
-	"minPosition": { "$ref": "https://github.com/jamestunnell/prosper/vector.json" },
-	"tileSize": { "$ref": "https://github.com/jamestunnell/prosper/size.json" },
+	"minPosition": { "$ref": "https://github.com/jamestunnell/topdown/vector.json" },
+	"tileSize": { "$ref": "https://github.com/jamestunnell/topdown/size.json" },
 	"tileDefs": {
 		"type": "object",
 		"patternProperties" :{
@@ -26,13 +26,13 @@ const TileGridSchemaStr = `{
   },
   "defs": {
 	"tileDef": {
-		"required": ["imageSetRef","startPixel"],
+		"required": ["spriteSetRef","startPoint"],
 		"properties": {
-			"imageSetRef": {
+			"spriteSetRef": {
 				"type": "string",
 				"minLength": 1
 			},
-			"startPixel": { "$ref": "https://github.com/jamestunnell/prosper/pixel.json" }
+			"startPoint": { "$ref": "https://github.com/jamestunnell/topdown/point.json" }
 		}
 	}
   }

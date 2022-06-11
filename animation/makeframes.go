@@ -1,28 +1,18 @@
 package animation
 
 import (
-	"fmt"
-
 	"github.com/hajimehoshi/ebiten/v2"
 	"golang.org/x/exp/slices"
 
-	"github.com/jamestunnell/topdown"
-	"github.com/jamestunnell/topdown/imageset"
+	"github.com/jamestunnell/topdown/sprite"
 )
 
-func FrameImages(tag string, imageSet *imageset.ImageSet) (Images, error) {
+func FrameImages(tag string, spriteSet *sprite.SpriteSet) (Images, error) {
 	frameImages := Images{}
 
-	for _, subImage := range imageSet.SubImages {
-		if slices.Contains(subImage.Tags, tag) {
-			img, _, found := imageSet.SubImage(topdown.NewPixel(subImage.X, subImage.Y))
-			if !found {
-				err := fmt.Errorf("failed to find sub-image at (%d, %d)", subImage.X, subImage.Y)
-
-				return Images{}, err
-			}
-
-			frameImages = append(frameImages, img)
+	for _, sprite := range spriteSet.Sprites {
+		if slices.Contains(sprite.Tags, tag) {
+			frameImages = append(frameImages, sprite.Image)
 		}
 	}
 

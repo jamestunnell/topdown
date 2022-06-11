@@ -45,7 +45,7 @@ func TestEngineStartModeFailsToInit(t *testing.T) {
 		ResourcesDir: dir,
 		StartMode:    mode,
 		ExtraTypes:   []resource.Type{},
-		WindowSize:   topdown.NewSize(100, 100),
+		WindowSize:   topdown.Sz(100, 100),
 	}
 
 	eng := engine.New(cfg)
@@ -69,7 +69,7 @@ func TestEngine(t *testing.T) {
 		ResourcesDir: dir,
 		StartMode:    mode,
 		ExtraTypes:   []resource.Type{},
-		WindowSize:   topdown.NewSize(200, 200),
+		WindowSize:   topdown.Sz(200, 200),
 	}
 
 	eng := engine.New(cfg)

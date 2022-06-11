@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"image"
 	"image/color"
+	"math"
 	"time"
 
 	"github.com/hajimehoshi/ebiten/v2"
@@ -30,10 +31,10 @@ type Play struct {
 	control      control.System
 	moveCollide  movecollide.System
 
-	windowWidth, windowHeight int
+	screenSize topdown.Size[int]
 }
 
-func (p *Play) Initialize(windowSize topdown.Size, mgr resource.Manager) error {
+func (p *Play) Initialize(screenSize topdown.Size[int], mgr resource.Manager) error {
 	player, err := resource.GetAs[*Player](mgr, p.PlayerRef)
 	if err != nil {
 		return fmt.Errorf("failed to get player: %w", err)
@@ -44,7 +45,7 @@ func (p *Play) Initialize(windowSize topdown.Size, mgr resource.Manager) error {
 		return fmt.Errorf("failed to get world: %w", err)
 	}
 
-	cam, err := camera.New(int(windowSize.Width), int(windowSize.Height))
+	cam, err := camera.New(screenSize)
 	if err != nil {
 		return fmt.Errorf("failed to make camera: %w", err)
 	}
@@ -62,8 +63,7 @@ func (p *Play) Initialize(windowSize topdown.Size, mgr resource.Manager) error {
 	p.moveCollide = moveCollide
 	p.control = control.NewSystem()
 	p.animation = animation.NewSystem()
-	p.windowWidth = int(windowSize.Width)
-	p.windowHeight = int(windowSize.Height)
+	p.screenSize = screenSize
 
 	objs := map[string]any{
 		"player": p.player,
@@ -90,7 +90,7 @@ func (p *Play) Update() (engine.Mode, error) {
 	p.animation.Animate(dt)
 
 	// Update the camera position and zoom
-	p.cam.Move(image.Pt(int(p.player.Position.X), int(p.player.Position.Y)))
+	p.cam.Move(p.player.Position.AsPoint())
 
 	_, scrollAmount := ebiten.Wheel()
 	if scrollAmount > 0 {
@@ -130,7 +130,11 @@ func (p *Play) Draw(screen *ebiten.Image) {
 		opts.GeoM.Translate(translateX, translateY)
 	}
 
-	subImg := p.worldDrawing.Surface().SubImage(visible).(*ebiten.Image)
+	rect := image.Rect(
+		int(math.Round(visible.Min.X)), int(math.Round(visible.Min.Y)),
+		int(math.Round(visible.Max.X)), int(math.Round(visible.Max.Y)))
+
+	subImg := p.worldDrawing.Surface().SubImage(rect).(*ebiten.Image)
 
 	// draws visible world to camera drawing surface
 	surface.DrawImage(subImg, opts)
@@ -140,8 +144,10 @@ func (p *Play) Draw(screen *ebiten.Image) {
 }
 
 func (p *Play) Layout(w, h int) (int, int) {
-	if p.windowWidth != w || p.windowHeight != h {
-		err := p.cam.Resize(w, h)
+	sz := topdown.Sz(w, h)
+
+	if !sz.Equal(p.screenSize) {
+		err := p.cam.Resize(sz)
 		if err != nil {
 			log.Warn().
 				Err(err).
@@ -150,13 +156,12 @@ func (p *Play) Layout(w, h int) (int, int) {
 				Msg("failed to resize camera")
 
 			// stay at the last size that worked
-			return p.windowWidth, p.windowHeight
+			return p.screenSize.Width, p.screenSize.Height
 		}
 
 		log.Debug().Int("w", w).Int("h", h).Msg("resized window")
 
-		p.windowWidth = w
-		p.windowHeight = h
+		p.screenSize = sz
 	}
 
 	return w, h

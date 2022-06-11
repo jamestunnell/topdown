@@ -50,7 +50,7 @@ func (mr *MockModeMockRecorder) Draw(arg0 interface{}) *gomock.Call {
 }
 
 // Initialize mocks base method.
-func (m *MockMode) Initialize(arg0 topdown.Size, arg1 resource.Manager) error {
+func (m *MockMode) Initialize(arg0 topdown.Size[int], arg1 resource.Manager) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Initialize", arg0, arg1)
 	ret0, _ := ret[0].(error)

@@ -10,7 +10,7 @@ import (
 //go:generate mockgen -destination=mock_engine/mockmode.go . Mode
 
 type Mode interface {
-	Initialize(screenSize topdown.Size, mgr resource.Manager) error
+	Initialize(screenSize topdown.Size[int], mgr resource.Manager) error
 
 	Update() (Mode, error)
 	Draw(screen *ebiten.Image)

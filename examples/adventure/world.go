@@ -13,8 +13,8 @@ type WorldType struct {
 }
 
 type World struct {
-	Size          topdown.Size `json:"size"`
-	BackgroundRef string       `json:"backgroundRef"`
+	Size          topdown.Size[float64] `json:"size"`
+	BackgroundRef string                `json:"backgroundRef"`
 
 	*tilegrid.Background
 }

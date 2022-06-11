@@ -9,14 +9,14 @@ import (
 var schema *gojsonschema.Schema
 
 const SchemaStr = `{
-  "$id": "https://github.com/jamestunnell/prosper/animations.json",
+  "$id": "https://github.com/jamestunnell/topdown/animations.json",
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "Animations",
   "description": "Organizes tagged image set frames into for animations.",
   "type": "object",
-  "required": ["imageSetRef", "frameDuration"],
+  "required": ["spriteSheetRef", "frameDuration"],
   "properties": {
-    "imageSetRef": {
+    "spriteSheetRef": {
       "type": "string",
 	  "minLength": 1
 	},

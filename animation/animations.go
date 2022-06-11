@@ -6,13 +6,14 @@ import (
 	"time"
 
 	"github.com/hajimehoshi/ebiten/v2"
-	"github.com/jamestunnell/topdown/imageset"
+
 	"github.com/jamestunnell/topdown/resource"
+	"github.com/jamestunnell/topdown/sprite"
 )
 
 // Animations organizes tagged frames from an image set into animations.
 type Animations struct {
-	ImageSetRef   string
+	SpriteSetRef  string
 	FrameDuration time.Duration
 
 	TaggedImages map[string]Images
@@ -22,7 +23,7 @@ type Animations struct {
 type Images = []*ebiten.Image
 
 type AnimationsJSON struct {
-	ImageSetRef   string `json:"imageSetRef"`
+	SpriteSetRef  string `json:"spriteSetRef"`
 	FrameDuration string `json:"frameDuration"`
 }
 
@@ -34,9 +35,9 @@ type Frame struct {
 const TypeName = "animations"
 
 func NewAnimations(
-	imageSetRef string, frameDur time.Duration) *Animations {
+	spriteSetRef string, frameDur time.Duration) *Animations {
 	return &Animations{
-		ImageSetRef:   imageSetRef,
+		SpriteSetRef:  spriteSetRef,
 		FrameDuration: frameDur,
 		TaggedImages:  map[string]Images{},
 	}
@@ -44,7 +45,7 @@ func NewAnimations(
 
 func (anims *Animations) MarshalJSON() ([]byte, error) {
 	animsJSON := &AnimationsJSON{
-		ImageSetRef:   anims.ImageSetRef,
+		SpriteSetRef:  anims.SpriteSetRef,
 		FrameDuration: anims.FrameDuration.String(),
 	}
 
@@ -71,16 +72,16 @@ func (anims *Animations) UnmarshalJSON(d []byte) error {
 		return fmt.Errorf("failed to parse frame duration '%s': %w", anims.FrameDuration, err)
 	}
 
-	anims.ImageSetRef = animsJSON.ImageSetRef
+	anims.SpriteSetRef = animsJSON.SpriteSetRef
 	anims.FrameDuration = frameDur
 
 	return nil
 }
 
 func (anims *Animations) Initialize(mgr resource.Manager) error {
-	is, err := resource.GetAs[*imageset.ImageSet](mgr, anims.ImageSetRef)
+	is, err := resource.GetAs[*sprite.SpriteSet](mgr, anims.SpriteSetRef)
 	if err != nil {
-		return fmt.Errorf("failed to get '%s' from dependencies: %w", anims.ImageSetRef, err)
+		return fmt.Errorf("failed to get '%s' from dependencies: %w", anims.SpriteSetRef, err)
 	}
 
 	taggedImages := map[string]Images{}

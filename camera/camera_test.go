@@ -1,38 +1,38 @@
 package camera_test
 
 import (
-	"image"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
+	"github.com/jamestunnell/topdown"
 	"github.com/jamestunnell/topdown/camera"
 )
 
 type testCase struct {
 	Name          string
-	Center        image.Point
+	Position      topdown.Point[float64]
 	Width, Height int
 	Zoom          float64
 	ExpectedZoom  float64
 }
 
 func TestCameraDefaults(t *testing.T) {
-	cam, err := camera.New(500, 300)
+	cam, err := camera.New(topdown.Sz(500, 300))
 
 	require.NoError(t, err)
-	assert.Equal(t, image.Pt(0, 0), cam.WorldPosition())
+	assert.Equal(t, topdown.Pt[float64](0, 0), cam.WorldPosition())
 	assert.Equal(t, float64(1), cam.ZoomLevel())
 }
 
 func TestCameraScreenTooBig(t *testing.T) {
-	cam, err := camera.New(camera.MaxWidth+1, 300)
+	cam, err := camera.New(topdown.Sz(camera.MaxWidth+1, 300))
 
 	assert.Error(t, err)
 	assert.Nil(t, cam)
 
-	cam, err = camera.New(300, camera.MaxHeight+1)
+	cam, err = camera.New(topdown.Sz(300, camera.MaxHeight+1))
 
 	assert.Error(t, err)
 	assert.Nil(t, cam)
@@ -42,7 +42,7 @@ func TestCameraBascis(t *testing.T) {
 	testCases := []*testCase{
 		{
 			Name:         "default zoom at origin",
-			Center:       image.Pt(0, 0),
+			Position:     topdown.Pt[float64](0, 0),
 			Width:        400,
 			Height:       200,
 			Zoom:         1,
@@ -50,7 +50,7 @@ func TestCameraBascis(t *testing.T) {
 		},
 		{
 			Name:         "2X zoom",
-			Center:       image.Pt(-10, 150),
+			Position:     topdown.Pt[float64](-10, 150),
 			Width:        640,
 			Height:       480,
 			Zoom:         2,
@@ -58,7 +58,7 @@ func TestCameraBascis(t *testing.T) {
 		},
 		{
 			Name:         "0.5X zoom",
-			Center:       image.Pt(250, -170),
+			Position:     topdown.Pt[float64](250, -170),
 			Width:        320,
 			Height:       240,
 			Zoom:         0.5,
@@ -66,19 +66,19 @@ func TestCameraBascis(t *testing.T) {
 		},
 		{
 			Name:         "min zoom",
-			Center:       image.Pt(-25, -50),
+			Position:     topdown.Pt[float64](-25, -50),
 			Width:        800,
 			Height:       600,
-			Zoom:         camera.MinZoomLevel(800, 600),
-			ExpectedZoom: camera.MinZoomLevel(800, 600),
+			Zoom:         camera.MinZoomLevel(topdown.Sz(800, 600)),
+			ExpectedZoom: camera.MinZoomLevel(topdown.Sz(800, 600)),
 		},
 		{
 			Name:         "below min zoom",
-			Center:       image.Pt(44, 26),
+			Position:     topdown.Pt[float64](44, 26),
 			Width:        1200,
 			Height:       900,
-			Zoom:         camera.MinZoomLevel(1200, 900) / 2,
-			ExpectedZoom: camera.MinZoomLevel(1200, 900),
+			Zoom:         camera.MinZoomLevel(topdown.Sz(1200, 900)) / 2,
+			ExpectedZoom: camera.MinZoomLevel(topdown.Sz(1200, 900)),
 		},
 	}
 
@@ -88,16 +88,16 @@ func TestCameraBascis(t *testing.T) {
 }
 
 func TestCameraResizeTooBig(t *testing.T) {
-	cam, err := camera.New(200, 200)
+	cam, err := camera.New(topdown.Sz(200, 200))
 
 	require.NoError(t, err)
 
-	assert.Error(t, cam.Resize(camera.MaxWidth+1, 200))
-	assert.Error(t, cam.Resize(200, camera.MaxHeight+1))
+	assert.Error(t, cam.Resize(topdown.Sz(camera.MaxWidth+1, 200)))
+	assert.Error(t, cam.Resize(topdown.Sz(200, camera.MaxHeight+1)))
 }
 
 func TestCameraResizeRequiresZoomAdjust(t *testing.T) {
-	cam, err := camera.New(200, 200)
+	cam, err := camera.New(topdown.Sz(200, 200))
 
 	require.NoError(t, err)
 
@@ -105,57 +105,57 @@ func TestCameraResizeRequiresZoomAdjust(t *testing.T) {
 
 	cam.Zoom(minZoom)
 
-	assert.NoError(t, cam.Resize(400, 400))
+	assert.NoError(t, cam.Resize(topdown.Sz(400, 400)))
 
 	assert.Equal(t, minZoom*2, cam.ZoomLevel())
 }
 
 func TestCameraConvertCoordsOutOfArea(t *testing.T) {
-	cam, err := camera.New(500, 300)
+	cam, err := camera.New(topdown.Sz(500, 300))
 
 	require.NoError(t, err)
 
-	_, ok := cam.ConvertWorldToScreen(image.Pt(-251, -150))
+	_, ok := cam.ConvertWorldToScreen(topdown.Pt[float64](-251, -150))
 
 	assert.False(t, ok)
 
-	_, ok = cam.ConvertWorldToScreen(image.Pt(-250, -151))
+	_, ok = cam.ConvertWorldToScreen(topdown.Pt[float64](-250, -151))
 
 	assert.False(t, ok)
 
-	_, ok = cam.ConvertScreenToWorld(image.Pt(-1, 0))
+	_, ok = cam.ConvertScreenToWorld(topdown.Pt(-1, 0))
 
 	assert.False(t, ok)
 
-	_, ok = cam.ConvertScreenToWorld(image.Pt(0, -1))
+	_, ok = cam.ConvertScreenToWorld(topdown.Pt(0, -1))
 
 	assert.False(t, ok)
 }
 
 func TestCameraConvertCoordsDefaultZoom(t *testing.T) {
-	cam, err := camera.New(500, 300)
+	cam, err := camera.New(topdown.Sz(500, 300))
 
 	require.NoError(t, err)
 
 	testCameraConvertCoordsOK(
 		t, "world pos (0,0) - screen center", cam, cam.WorldPosition(), cam.ScreenPosition())
 	testCameraConvertCoordsOK(
-		t, "world pos (0,0) - screen start", cam, image.Pt(-250, -150), image.Pt(0, 0))
+		t, "world pos (0,0) - screen start", cam, topdown.Pt[float64](-250, -150), topdown.Pt(0, 0))
 	testCameraConvertCoordsOK(
-		t, "world pos (0,0) - screen end", cam, image.Pt(250, 150), image.Pt(500, 300))
+		t, "world pos (0,0) - screen end", cam, topdown.Pt[float64](250, 150), topdown.Pt(500, 300))
 
-	cam.Move(image.Pt(100, 50))
+	cam.Move(topdown.Pt[float64](100, 50))
 
 	testCameraConvertCoordsOK(
-		t, "world pos (100,50) - screen center", cam, image.Pt(100, 50), cam.ScreenPosition())
+		t, "world pos (100,50) - screen center", cam, topdown.Pt[float64](100, 50), cam.ScreenPosition())
 	testCameraConvertCoordsOK(
-		t, "world pos (100,50) - screen start", cam, image.Pt(-150, -100), image.Pt(0, 0))
+		t, "world pos (100,50) - screen start", cam, topdown.Pt[float64](-150, -100), topdown.Pt(0, 0))
 	testCameraConvertCoordsOK(
-		t, "world pos (100,50) - screen end", cam, image.Pt(350, 200), image.Pt(500, 300))
+		t, "world pos (100,50) - screen end", cam, topdown.Pt[float64](350, 200), topdown.Pt(500, 300))
 }
 
 func TestCameraConvertCoordsHalfZoom(t *testing.T) {
-	cam, err := camera.New(500, 300)
+	cam, err := camera.New(topdown.Sz(500, 300))
 
 	require.NoError(t, err)
 
@@ -165,25 +165,26 @@ func TestCameraConvertCoordsHalfZoom(t *testing.T) {
 	testCameraConvertCoordsOK(
 		t, "world pos (0,0) - screen center", cam, cam.WorldPosition(), cam.ScreenPosition())
 	testCameraConvertCoordsOK(
-		t, "world pos (0,0) - screen start", cam, image.Pt(-500, -300), image.Pt(0, 0))
+		t, "world pos (0,0) - screen start", cam, topdown.Pt[float64](-500, -300), topdown.Pt(0, 0))
 	testCameraConvertCoordsOK(
-		t, "world pos (0,0) - screen end", cam, image.Pt(500, 300), image.Pt(500, 300))
+		t, "world pos (0,0) - screen end", cam, topdown.Pt[float64](500, 300), topdown.Pt(500, 300))
 
-	cam.Move(image.Pt(100, 50))
+	cam.Move(topdown.Pt[float64](100, 50))
 
 	testCameraConvertCoordsOK(
-		t, "world pos (100,50) - screen center", cam, image.Pt(100, 50), cam.ScreenPosition())
+		t, "world pos (100,50) - screen center", cam, topdown.Pt[float64](100, 50), cam.ScreenPosition())
 	testCameraConvertCoordsOK(
-		t, "world pos (100,50) - screen start", cam, image.Pt(-400, -250), image.Pt(0, 0))
+		t, "world pos (100,50) - screen start", cam, topdown.Pt[float64](-400, -250), topdown.Pt(0, 0))
 	testCameraConvertCoordsOK(
-		t, "world pos (100,50) - screen end", cam, image.Pt(600, 350), image.Pt(500, 300))
+		t, "world pos (100,50) - screen end", cam, topdown.Pt[float64](600, 350), topdown.Pt(500, 300))
 }
 
 func testCameraConvertCoordsOK(
 	t *testing.T,
 	name string,
 	cam camera.Camera,
-	worldPos, screenPos image.Point) {
+	worldPos topdown.Point[float64],
+	screenPos topdown.Point[int]) {
 	t.Run(name, func(t *testing.T) {
 		actualScreenPos, ok := cam.ConvertWorldToScreen(worldPos)
 
@@ -199,27 +200,27 @@ func testCameraConvertCoordsOK(
 
 func testCameraBasics(t *testing.T, tc *testCase) {
 	t.Run(tc.Name, func(t *testing.T) {
-		cam, err := camera.New(tc.Width, tc.Height)
+		cam, err := camera.New(topdown.Sz(tc.Width, tc.Height))
 		require.NoError(t, err)
 
 		assert.NotNil(t, cam.DrawSurface())
 
-		cam.Move(tc.Center)
+		cam.Move(tc.Position)
 		cam.Zoom(tc.Zoom)
 
 		assert.Equal(t, tc.ExpectedZoom, cam.ZoomLevel())
-		assert.Equal(t, tc.Center, cam.WorldPosition())
+		assert.Equal(t, tc.Position, cam.WorldPosition())
 
-		area := cam.ScreenArea()
+		screenArea := cam.ScreenArea()
 
-		assert.Equal(t, tc.Width, area.Dx())
-		assert.Equal(t, tc.Height, area.Dy())
+		assert.Equal(t, tc.Width, screenArea.Dx())
+		assert.Equal(t, tc.Height, screenArea.Dy())
 
-		area = cam.WorldArea()
+		area := cam.WorldArea()
 
 		zoomMul := 1 / tc.ExpectedZoom
-		width := int(float64(tc.Width) * zoomMul)
-		height := int(float64(tc.Height) * zoomMul)
+		width := float64(tc.Width) * zoomMul
+		height := float64(tc.Height) * zoomMul
 
 		dx := area.Dx()
 		dy := area.Dy()
@@ -227,7 +228,7 @@ func testCameraBasics(t *testing.T, tc *testCase) {
 		assert.Equal(t, width, dx)
 		assert.Equal(t, height, dy)
 
-		assert.Equal(t, tc.Center.X, (area.Min.X + dx/2))
-		assert.Equal(t, tc.Center.Y, (area.Min.Y + dy/2))
+		assert.Equal(t, tc.Position.X, (area.Min.X + dx/2))
+		assert.Equal(t, tc.Position.Y, (area.Min.Y + dy/2))
 	})
 }

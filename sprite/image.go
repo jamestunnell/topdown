@@ -1,4 +1,4 @@
-package imageresource
+package sprite
 
 import (
 	"fmt"
@@ -12,11 +12,11 @@ import (
 	"github.com/jamestunnell/topdown/resource"
 )
 
-type ImageResource struct {
+type Image struct {
 	Image *ebiten.Image
 }
 
-type Type struct {
+type ImageType struct {
 	name string
 }
 
@@ -26,7 +26,7 @@ const (
 	ImageTypeJPG  = "jpg"
 )
 
-func Load(path string) (*ImageResource, error) {
+func LoadImage(path string) (*Image, error) {
 	f, err := os.Open(path)
 	if err != nil {
 		err = fmt.Errorf("failed to open: %w", err)
@@ -41,29 +41,21 @@ func Load(path string) (*ImageResource, error) {
 		return nil, err
 	}
 
-	a := &ImageResource{
+	a := &Image{
 		Image: ebiten.NewImageFromImage(img),
 	}
 
 	return a, nil
 }
 
-func (t *Type) Name() string {
+func (img *Image) Initialize(mgr resource.Manager) error {
+	return nil
+}
+
+func (t *ImageType) Name() string {
 	return t.name
 }
 
-func (t *Type) Load(path string) (resource.Resource, error) {
-	return Load(path)
-}
-
-func Types() []resource.Type {
-	return []resource.Type{
-		&Type{name: ImageTypePNG},
-		&Type{name: ImageTypeJPG},
-		&Type{name: ImageTypeJPEG},
-	}
-}
-
-func (img *ImageResource) Initialize(mgr resource.Manager) error {
-	return nil
+func (t *ImageType) Load(path string) (resource.Resource, error) {
+	return LoadImage(path)
 }

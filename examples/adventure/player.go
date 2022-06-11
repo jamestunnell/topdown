@@ -3,7 +3,6 @@ package main
 import (
 	"errors"
 	"fmt"
-	"image"
 	"strings"
 	"time"
 
@@ -24,7 +23,7 @@ type PlayerType struct {
 
 type Player struct {
 	Animations   *animation.Animations `json:"animations"`
-	ColliderSize topdown.Size          `jons:"colliderSize"`
+	ColliderSize topdown.Size[float64] `jons:"colliderSize"`
 	Position     topdown.Vector        `json:"position"`
 
 	Collider  cirno.Shape
@@ -54,10 +53,9 @@ func (p *Player) Initialize(mgr resource.Manager) error {
 		return errors.New("failed to start idle animation")
 	}
 
-	cW := float64(p.ColliderSize.Width)
-	cH := float64(p.ColliderSize.Height)
 	cCenter := cirno.NewVector(p.Position.X, p.Position.Y)
-	colliderRect, err := cirno.NewRectangle(cCenter, float64(cW), float64(cH), 0)
+	colliderRect, err := cirno.NewRectangle(
+		cCenter, p.ColliderSize.Width, p.ColliderSize.Height, 0)
 
 	if err != nil {
 		return fmt.Errorf("failed to make collider rect: %w", err)
@@ -65,7 +63,7 @@ func (p *Player) Initialize(mgr resource.Manager) error {
 
 	p.Collider = colliderRect
 	p.Velocity = topdown.Vector{}
-	p.Direction = topdown.NewVector(0, 1)
+	p.Direction = topdown.Vec(0, 1)
 
 	return nil
 }
@@ -74,16 +72,17 @@ func (p *Player) WorldLayer() int {
 	return drawing.LayerForeground
 }
 
-func (p *Player) WorldDraw(world *ebiten.Image, visible image.Rectangle) {
+func (p *Player) WorldDraw(world *ebiten.Image, visible topdown.Rectangle[float64]) {
 	img := p.Animations.Controller.CurrentFrameImage()
 	w, h := img.Size()
-	w_2 := w / 2
+	wFlt := float64(w)
+	hFlt := float64(h)
 
 	// the image bottom lines up with the collider bottom
-	maxY := int(p.Position.Y + float64(p.ColliderSize.Height)/2)
-	minX := int(p.Position.X) - w_2
+	maxY := p.Position.Y + p.ColliderSize.Height/2.0
+	minX := p.Position.X - wFlt/2.0
 
-	worldArea := image.Rect(minX, maxY-h, minX+w, maxY)
+	worldArea := topdown.Rect(minX, maxY-hFlt, minX+wFlt, maxY)
 
 	if worldArea.Intersect(visible).Empty() {
 		return

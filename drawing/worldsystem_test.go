@@ -5,6 +5,7 @@ import (
 
 	"github.com/golang/mock/gomock"
 
+	"github.com/jamestunnell/topdown"
 	"github.com/jamestunnell/topdown/drawing"
 	"github.com/jamestunnell/topdown/drawing/mock_drawing"
 )
@@ -12,7 +13,7 @@ import (
 func TestDrawingSystemNoDrawables(t *testing.T) {
 	s := drawing.NewWorldSystem(100, 100)
 
-	s.DrawWorld(s.Surface().Bounds())
+	s.DrawWorld(topdown.Rect[float64](0, 0, 100, 100))
 }
 
 func TestDrawingSystem(t *testing.T) {
@@ -29,7 +30,7 @@ func TestDrawingSystem(t *testing.T) {
 	s.Add("b", d2)
 
 	img := s.Surface()
-	visible := img.Bounds()
+	visible := topdown.Rect[float64](0, 0, 100, 100)
 
 	d1.EXPECT().WorldDraw(img, visible)
 	d2.EXPECT().WorldDraw(img, visible)

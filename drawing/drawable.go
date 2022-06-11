@@ -1,9 +1,9 @@
 package drawing
 
 import (
-	"image"
-
 	"github.com/hajimehoshi/ebiten/v2"
+
+	"github.com/jamestunnell/topdown"
 )
 
 //go:generate mockgen -destination=mock_drawing/mockdrawable.go . WorldDrawable,OverlayDrawable
@@ -12,7 +12,7 @@ import (
 // on the world surface.
 type WorldDrawable interface {
 	WorldLayer() int
-	WorldDraw(world *ebiten.Image, visible image.Rectangle)
+	WorldDraw(world *ebiten.Image, visible topdown.Rectangle[float64])
 }
 
 // OverlayDrawable is the component used in the drawing system to draw

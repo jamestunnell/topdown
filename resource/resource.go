@@ -3,8 +3,6 @@ package resource
 import (
 	"fmt"
 	"reflect"
-
-	"github.com/jamestunnell/topdown"
 )
 
 //go:generate mockgen -destination=mock_resource/mockresource.go . Resource
@@ -19,7 +17,7 @@ func As[T Resource](r Resource) (T, error) {
 
 	if val, ok = r.(T); !ok {
 		expectedType := reflect.TypeOf(val)
-		err := topdown.NewErrUnexpectedType(r, expectedType.Name())
+		err := NewErrUnexpectedType(r, expectedType.Name())
 
 		return val, err
 	}

@@ -9,435 +9,435 @@
   },
   "tileDefs": {
     "A0": {
-      "imageSetRef": "grasstiles.imageset",
-      "startPixel": {
+      "spriteSetRef": "grass.spriteset",
+      "startPoint": {
         "x": 160,
         "y": 224
       }
     },
     "A1": {
-      "imageSetRef": "grasstiles.imageset",
-      "startPixel": {
+      "spriteSetRef": "grass.spriteset",
+      "startPoint": {
         "x": 128,
         "y": 192
       }
     },
     "A2": {
-      "imageSetRef": "grasstiles.imageset",
-      "startPixel": {
+      "spriteSetRef": "grass.spriteset",
+      "startPoint": {
         "x": 160,
         "y": 192
       }
     },
     "A3": {
-      "imageSetRef": "grasstiles.imageset",
-      "startPixel": {
+      "spriteSetRef": "grass.spriteset",
+      "startPoint": {
         "x": 192,
         "y": 192
       }
     },
     "A4": {
-      "imageSetRef": "grasstiles.imageset",
-      "startPixel": {
+      "spriteSetRef": "grass.spriteset",
+      "startPoint": {
         "x": 224,
         "y": 192
       }
     },
     "A5": {
-      "imageSetRef": "grasstiles.imageset",
-      "startPixel": {
+      "spriteSetRef": "grass.spriteset",
+      "startPoint": {
         "x": 0,
         "y": 224
       }
     },
     "A6": {
-      "imageSetRef": "grasstiles.imageset",
-      "startPixel": {
+      "spriteSetRef": "grass.spriteset",
+      "startPoint": {
         "x": 32,
         "y": 224
       }
     },
     "A7": {
-      "imageSetRef": "grasstiles.imageset",
-      "startPixel": {
+      "spriteSetRef": "grass.spriteset",
+      "startPoint": {
         "x": 64,
         "y": 224
       }
     },
     "A8": {
-      "imageSetRef": "grasstiles.imageset",
-      "startPixel": {
+      "spriteSetRef": "grass.spriteset",
+      "startPoint": {
         "x": 96,
         "y": 224
       }
     },
     "A9": {
-      "imageSetRef": "grasstiles.imageset",
-      "startPixel": {
+      "spriteSetRef": "grass.spriteset",
+      "startPoint": {
         "x": 128,
         "y": 224
       }
     },
     "AA": {
-      "imageSetRef": "grasstiles.imageset",
-      "startPixel": {
+      "spriteSetRef": "grass.spriteset",
+      "startPoint": {
         "x": 0,
         "y": 0
       }
     },
     "AB": {
-      "imageSetRef": "grasstiles.imageset",
-      "startPixel": {
+      "spriteSetRef": "grass.spriteset",
+      "startPoint": {
         "x": 32,
         "y": 0
       }
     },
     "AC": {
-      "imageSetRef": "grasstiles.imageset",
-      "startPixel": {
+      "spriteSetRef": "grass.spriteset",
+      "startPoint": {
         "x": 64,
         "y": 0
       }
     },
     "AD": {
-      "imageSetRef": "grasstiles.imageset",
-      "startPixel": {
+      "spriteSetRef": "grass.spriteset",
+      "startPoint": {
         "x": 96,
         "y": 0
       }
     },
     "AE": {
-      "imageSetRef": "grasstiles.imageset",
-      "startPixel": {
+      "spriteSetRef": "grass.spriteset",
+      "startPoint": {
         "x": 128,
         "y": 0
       }
     },
     "AF": {
-      "imageSetRef": "grasstiles.imageset",
-      "startPixel": {
+      "spriteSetRef": "grass.spriteset",
+      "startPoint": {
         "x": 160,
         "y": 0
       }
     },
     "AG": {
-      "imageSetRef": "grasstiles.imageset",
-      "startPixel": {
+      "spriteSetRef": "grass.spriteset",
+      "startPoint": {
         "x": 192,
         "y": 0
       }
     },
     "AH": {
-      "imageSetRef": "grasstiles.imageset",
-      "startPixel": {
+      "spriteSetRef": "grass.spriteset",
+      "startPoint": {
         "x": 224,
         "y": 0
       }
     },
     "AI": {
-      "imageSetRef": "grasstiles.imageset",
-      "startPixel": {
+      "spriteSetRef": "grass.spriteset",
+      "startPoint": {
         "x": 0,
         "y": 32
       }
     },
     "AJ": {
-      "imageSetRef": "grasstiles.imageset",
-      "startPixel": {
+      "spriteSetRef": "grass.spriteset",
+      "startPoint": {
         "x": 32,
         "y": 32
       }
     },
     "AK": {
-      "imageSetRef": "grasstiles.imageset",
-      "startPixel": {
+      "spriteSetRef": "grass.spriteset",
+      "startPoint": {
         "x": 64,
         "y": 32
       }
     },
     "AL": {
-      "imageSetRef": "grasstiles.imageset",
-      "startPixel": {
+      "spriteSetRef": "grass.spriteset",
+      "startPoint": {
         "x": 96,
         "y": 32
       }
     },
     "AM": {
-      "imageSetRef": "grasstiles.imageset",
-      "startPixel": {
+      "spriteSetRef": "grass.spriteset",
+      "startPoint": {
         "x": 128,
         "y": 32
       }
     },
     "AN": {
-      "imageSetRef": "grasstiles.imageset",
-      "startPixel": {
+      "spriteSetRef": "grass.spriteset",
+      "startPoint": {
         "x": 160,
         "y": 32
       }
     },
     "AO": {
-      "imageSetRef": "grasstiles.imageset",
-      "startPixel": {
+      "spriteSetRef": "grass.spriteset",
+      "startPoint": {
         "x": 192,
         "y": 32
       }
     },
     "AP": {
-      "imageSetRef": "grasstiles.imageset",
-      "startPixel": {
+      "spriteSetRef": "grass.spriteset",
+      "startPoint": {
         "x": 224,
         "y": 32
       }
     },
     "AQ": {
-      "imageSetRef": "grasstiles.imageset",
-      "startPixel": {
+      "spriteSetRef": "grass.spriteset",
+      "startPoint": {
         "x": 0,
         "y": 64
       }
     },
     "AR": {
-      "imageSetRef": "grasstiles.imageset",
-      "startPixel": {
+      "spriteSetRef": "grass.spriteset",
+      "startPoint": {
         "x": 32,
         "y": 64
       }
     },
     "AS": {
-      "imageSetRef": "grasstiles.imageset",
-      "startPixel": {
+      "spriteSetRef": "grass.spriteset",
+      "startPoint": {
         "x": 64,
         "y": 64
       }
     },
     "AT": {
-      "imageSetRef": "grasstiles.imageset",
-      "startPixel": {
+      "spriteSetRef": "grass.spriteset",
+      "startPoint": {
         "x": 96,
         "y": 64
       }
     },
     "AU": {
-      "imageSetRef": "grasstiles.imageset",
-      "startPixel": {
+      "spriteSetRef": "grass.spriteset",
+      "startPoint": {
         "x": 128,
         "y": 64
       }
     },
     "AV": {
-      "imageSetRef": "grasstiles.imageset",
-      "startPixel": {
+      "spriteSetRef": "grass.spriteset",
+      "startPoint": {
         "x": 160,
         "y": 64
       }
     },
     "AW": {
-      "imageSetRef": "grasstiles.imageset",
-      "startPixel": {
+      "spriteSetRef": "grass.spriteset",
+      "startPoint": {
         "x": 192,
         "y": 64
       }
     },
     "AX": {
-      "imageSetRef": "grasstiles.imageset",
-      "startPixel": {
+      "spriteSetRef": "grass.spriteset",
+      "startPoint": {
         "x": 224,
         "y": 64
       }
     },
     "AY": {
-      "imageSetRef": "grasstiles.imageset",
-      "startPixel": {
+      "spriteSetRef": "grass.spriteset",
+      "startPoint": {
         "x": 0,
         "y": 96
       }
     },
     "AZ": {
-      "imageSetRef": "grasstiles.imageset",
-      "startPixel": {
+      "spriteSetRef": "grass.spriteset",
+      "startPoint": {
         "x": 32,
         "y": 96
       }
     },
     "Aa": {
-      "imageSetRef": "grasstiles.imageset",
-      "startPixel": {
+      "spriteSetRef": "grass.spriteset",
+      "startPoint": {
         "x": 64,
         "y": 96
       }
     },
     "Ab": {
-      "imageSetRef": "grasstiles.imageset",
-      "startPixel": {
+      "spriteSetRef": "grass.spriteset",
+      "startPoint": {
         "x": 96,
         "y": 96
       }
     },
     "Ac": {
-      "imageSetRef": "grasstiles.imageset",
-      "startPixel": {
+      "spriteSetRef": "grass.spriteset",
+      "startPoint": {
         "x": 128,
         "y": 96
       }
     },
     "Ad": {
-      "imageSetRef": "grasstiles.imageset",
-      "startPixel": {
+      "spriteSetRef": "grass.spriteset",
+      "startPoint": {
         "x": 160,
         "y": 96
       }
     },
     "Ae": {
-      "imageSetRef": "grasstiles.imageset",
-      "startPixel": {
+      "spriteSetRef": "grass.spriteset",
+      "startPoint": {
         "x": 192,
         "y": 96
       }
     },
     "Af": {
-      "imageSetRef": "grasstiles.imageset",
-      "startPixel": {
+      "spriteSetRef": "grass.spriteset",
+      "startPoint": {
         "x": 224,
         "y": 96
       }
     },
     "Ag": {
-      "imageSetRef": "grasstiles.imageset",
-      "startPixel": {
+      "spriteSetRef": "grass.spriteset",
+      "startPoint": {
         "x": 0,
         "y": 128
       }
     },
     "Ah": {
-      "imageSetRef": "grasstiles.imageset",
-      "startPixel": {
+      "spriteSetRef": "grass.spriteset",
+      "startPoint": {
         "x": 32,
         "y": 128
       }
     },
     "Ai": {
-      "imageSetRef": "grasstiles.imageset",
-      "startPixel": {
+      "spriteSetRef": "grass.spriteset",
+      "startPoint": {
         "x": 64,
         "y": 128
       }
     },
     "Aj": {
-      "imageSetRef": "grasstiles.imageset",
-      "startPixel": {
+      "spriteSetRef": "grass.spriteset",
+      "startPoint": {
         "x": 96,
         "y": 128
       }
     },
     "Ak": {
-      "imageSetRef": "grasstiles.imageset",
-      "startPixel": {
+      "spriteSetRef": "grass.spriteset",
+      "startPoint": {
         "x": 128,
         "y": 128
       }
     },
     "Al": {
-      "imageSetRef": "grasstiles.imageset",
-      "startPixel": {
+      "spriteSetRef": "grass.spriteset",
+      "startPoint": {
         "x": 160,
         "y": 128
       }
     },
     "Am": {
-      "imageSetRef": "grasstiles.imageset",
-      "startPixel": {
+      "spriteSetRef": "grass.spriteset",
+      "startPoint": {
         "x": 192,
         "y": 128
       }
     },
     "An": {
-      "imageSetRef": "grasstiles.imageset",
-      "startPixel": {
+      "spriteSetRef": "grass.spriteset",
+      "startPoint": {
         "x": 224,
         "y": 128
       }
     },
     "Ao": {
-      "imageSetRef": "grasstiles.imageset",
-      "startPixel": {
+      "spriteSetRef": "grass.spriteset",
+      "startPoint": {
         "x": 0,
         "y": 160
       }
     },
     "Ap": {
-      "imageSetRef": "grasstiles.imageset",
-      "startPixel": {
+      "spriteSetRef": "grass.spriteset",
+      "startPoint": {
         "x": 32,
         "y": 160
       }
     },
     "Aq": {
-      "imageSetRef": "grasstiles.imageset",
-      "startPixel": {
+      "spriteSetRef": "grass.spriteset",
+      "startPoint": {
         "x": 64,
         "y": 160
       }
     },
     "Ar": {
-      "imageSetRef": "grasstiles.imageset",
-      "startPixel": {
+      "spriteSetRef": "grass.spriteset",
+      "startPoint": {
         "x": 96,
         "y": 160
       }
     },
     "As": {
-      "imageSetRef": "grasstiles.imageset",
-      "startPixel": {
+      "spriteSetRef": "grass.spriteset",
+      "startPoint": {
         "x": 128,
         "y": 160
       }
     },
     "At": {
-      "imageSetRef": "grasstiles.imageset",
-      "startPixel": {
+      "spriteSetRef": "grass.spriteset",
+      "startPoint": {
         "x": 160,
         "y": 160
       }
     },
     "Au": {
-      "imageSetRef": "grasstiles.imageset",
-      "startPixel": {
+      "spriteSetRef": "grass.spriteset",
+      "startPoint": {
         "x": 192,
         "y": 160
       }
     },
     "Av": {
-      "imageSetRef": "grasstiles.imageset",
-      "startPixel": {
+      "spriteSetRef": "grass.spriteset",
+      "startPoint": {
         "x": 224,
         "y": 160
       }
     },
     "Aw": {
-      "imageSetRef": "grasstiles.imageset",
-      "startPixel": {
+      "spriteSetRef": "grass.spriteset",
+      "startPoint": {
         "x": 0,
         "y": 192
       }
     },
     "Ax": {
-      "imageSetRef": "grasstiles.imageset",
-      "startPixel": {
+      "spriteSetRef": "grass.spriteset",
+      "startPoint": {
         "x": 32,
         "y": 192
       }
     },
     "Ay": {
-      "imageSetRef": "grasstiles.imageset",
-      "startPixel": {
+      "spriteSetRef": "grass.spriteset",
+      "startPoint": {
         "x": 64,
         "y": 192
       }
     },
     "Az": {
-      "imageSetRef": "grasstiles.imageset",
-      "startPixel": {
+      "spriteSetRef": "grass.spriteset",
+      "startPoint": {
         "x": 96,
         "y": 192
       }
