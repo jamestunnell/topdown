@@ -14,9 +14,9 @@ const SchemaStr = `{
   "title": "Animations",
   "description": "Organizes tagged image set frames into for animations.",
   "type": "object",
-  "required": ["spriteSheetRef", "frameDuration"],
+  "required": ["spriteSetRef", "frameDuration"],
   "properties": {
-    "spriteSheetRef": {
+    "spriteSetRef": {
       "type": "string",
 	  "minLength": 1
 	},
