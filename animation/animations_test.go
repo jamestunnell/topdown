@@ -34,24 +34,28 @@ func TestAnimations(t *testing.T) {
 	// Break up the image into quadrants
 	sprites := []*sprite.Sprite{
 		{
-			Start: topdown.Pt(0, 0),
-			Size:  topdown.Sz(w/2, h/2),
-			Tags:  []string{"idle"},
+			ID:     "a",
+			Origin: topdown.Pt(0, 0),
+			Size:   topdown.Sz(w/2, h/2),
+			Tags:   []string{"idle"},
 		},
 		{
-			Start: topdown.Pt(w/2, 0),
-			Size:  topdown.Sz(w/2, h/2),
-			Tags:  []string{"idle"},
+			ID:     "b",
+			Origin: topdown.Pt(w/2, 0),
+			Size:   topdown.Sz(w/2, h/2),
+			Tags:   []string{"idle"},
 		},
 		{
-			Start: topdown.Pt(0, h/2),
-			Size:  topdown.Sz(w/2, h/2),
-			Tags:  []string{"walk"},
+			ID:     "c",
+			Origin: topdown.Pt(0, h/2),
+			Size:   topdown.Sz(w/2, h/2),
+			Tags:   []string{"walk"},
 		},
 		{
-			Start: topdown.Pt(w/2, h/2),
-			Size:  topdown.Sz(w/2, h/2),
-			Tags:  []string{"walk"},
+			ID:     "d",
+			Origin: topdown.Pt(w/2, h/2),
+			Size:   topdown.Sz(w/2, h/2),
+			Tags:   []string{"walk"},
 		},
 	}
 
@@ -99,7 +103,7 @@ func writeTestImageSet(t *testing.T, dir string, w, h int, sprites ...*sprite.Sp
 
 	ss := sprite.NewSheet(imgRef, sprites...)
 
-	f, err := os.CreateTemp(dir, "testSprites*.spriteset")
+	f, err := os.CreateTemp(dir, "testSprites*.spritesheet")
 
 	require.NoError(t, err)
 

@@ -25,8 +25,8 @@ func TestImageSet(t *testing.T) {
 	defer os.RemoveAll(dir)
 
 	subImages := []*sprite.Sprite{
-		{Start: topdown.Pt(0, 0), Size: topdown.Sz(16, 16)},
-		{Start: topdown.Pt(0, 16), Size: topdown.Sz(16, 16)},
+		{ID: "a", Origin: topdown.Pt(0, 0), Size: topdown.Sz(16, 16)},
+		{ID: "b", Origin: topdown.Pt(0, 16), Size: topdown.Sz(16, 16)},
 	}
 	ss := sprite.NewSheet("missing.png", subImages...)
 	partialPath := "bad.spritesheet"
