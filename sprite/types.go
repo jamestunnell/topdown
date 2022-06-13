@@ -9,9 +9,9 @@ import (
 var spritesType resource.Type
 
 func init() {
-	t, err := NewSpritesType()
+	t, err := NewSheetType()
 	if err != nil {
-		log.Fatal().Err(err).Msg("failed to make sprites type")
+		log.Fatal().Err(err).Msg("failed to make sprite sheet type")
 	}
 
 	spritesType = t

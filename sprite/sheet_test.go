@@ -28,15 +28,15 @@ func TestImageSet(t *testing.T) {
 		{Start: topdown.Pt(0, 0), Size: topdown.Sz(16, 16)},
 		{Start: topdown.Pt(0, 16), Size: topdown.Sz(16, 16)},
 	}
-	ss := sprite.NewSpriteSet("missing.png", subImages...)
-	partialPath := "bad.imageset"
+	ss := sprite.NewSheet("missing.png", subImages...)
+	partialPath := "bad.spritesheet"
 
 	require.NoError(t, jsonfile.Write(filepath.Join(dir, partialPath), ss))
 
 	mgr := restest.SetupManager(t, dir, sprite.Types()...)
 
 	// fails due to missing image
-	r, err := resource.GetAs[*sprite.SpriteSet](mgr, partialPath)
+	r, err := resource.GetAs[*sprite.Sheet](mgr, partialPath)
 
 	assert.Error(t, err)
 	assert.Nil(t, r)
@@ -44,27 +44,26 @@ func TestImageSet(t *testing.T) {
 	imagePath := spritetest.WriteTestPNG(t, dir, 128, 128)
 
 	ss.ImageRef = filepath.Base(imagePath)
-	partialPath = "good.spriteset"
+	partialPath = "good.spritesheet"
 
 	require.NoError(t, jsonfile.Write(filepath.Join(dir, partialPath), ss))
 
 	// should not fail this time with a good source image
-	r, err = resource.GetAs[*sprite.SpriteSet](mgr, partialPath)
+	r, err = resource.GetAs[*sprite.Sheet](mgr, partialPath)
 
 	require.NoError(t, err)
 
-	ss2, err := resource.As[*sprite.SpriteSet](r)
+	ss2, err := resource.As[*sprite.Sheet](r)
 
 	require.NoError(t, err)
 
-	subImg, subImgInfo, found := ss2.FindSprite(topdown.Pt(0, 0))
+	sprt, found := ss2.FindSpriteByOrigin(topdown.Pt(0, 0))
 
 	assert.True(t, found)
-	assert.NotNil(t, subImg)
-	assert.NotNil(t, subImgInfo)
+	assert.NotNil(t, sprt)
 
 	// also look for one that we don't expect to find
-	_, _, found = ss2.FindSprite(topdown.Pt(555, 60))
+	_, found = ss2.FindSpriteByOrigin(topdown.Pt(555, 60))
 
 	assert.False(t, found)
 }

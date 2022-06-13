@@ -1,6 +1,6 @@
 {
   "animations": {
-    "spriteSetRef": "char1.spriteset",
+    "spriteSetRef": "char1.spritesheet",
     "frameDuration": "150ms"
   },
   "position": {

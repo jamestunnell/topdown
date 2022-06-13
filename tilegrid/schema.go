@@ -5,35 +5,20 @@ const TileGridSchemaStr = `{
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "Image set",
   "type": "object",
-  "required": ["minPosition", "tileSize", "tileDefs", "tileRows"],
+  "required": ["origin", "tileSize", "tileLinks", "tileRows"],
   "properties": {
-	"minPosition": { "$ref": "https://github.com/jamestunnell/topdown/vector.json" },
+	"origin": { "$ref": "https://github.com/jamestunnell/topdown/vector.json" },
 	"tileSize": { "$ref": "https://github.com/jamestunnell/topdown/size.json" },
-	"tileDefs": {
+	"tileLinks": {
 		"type": "object",
 		"patternProperties" :{
-			".*": {"$ref": "#/defs/tileDef"}
+			".*": {"type": "string", "minLength": 1}
 		}
 	},
 	"tileRows": {
 		"type": "array",
-		"items": {
-			"type": "string",
-			"minLength": 1
-		},
+		"items": {"type": "string", "minLength": 1},
 		"minLength": 1
-	}
-  },
-  "defs": {
-	"tileDef": {
-		"required": ["spriteSetRef","startPoint"],
-		"properties": {
-			"spriteSetRef": {
-				"type": "string",
-				"minLength": 1
-			},
-			"startPoint": { "$ref": "https://github.com/jamestunnell/topdown/point.json" }
-		}
 	}
   }
 }`

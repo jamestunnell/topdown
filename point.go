@@ -35,6 +35,18 @@ func Pt[T Number](x, y T) Point[T] {
 	return Point[T]{X: x, Y: y}
 }
 
+func ParseIntPoint(s string) (Point[int], error) {
+	var x int
+	var y int
+
+	_, err := fmt.Sscanf(s, "(%d,%d)", &x, &y)
+	if err != nil {
+		return Point[int]{}, fmt.Errorf("failed to parse '%s' as int point: %w", s, err)
+	}
+
+	return Pt(x, y), nil
+}
+
 // String makes a string representing the point.
 func (p Point[T]) String() string {
 	return fmt.Sprintf("(%v,%v)", p.X, p.Y)

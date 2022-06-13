@@ -8,8 +8,6 @@ import (
 	"github.com/jamestunnell/topdown"
 	"github.com/jamestunnell/topdown/registry"
 	"github.com/jamestunnell/topdown/resource"
-	"github.com/jamestunnell/topdown/sprite"
-	"github.com/jamestunnell/topdown/tilegrid"
 )
 
 //go:generate mockgen -destination=mock_engine/mockengine.go . Engine
@@ -52,16 +50,9 @@ func New(cfg *Config) Engine {
 }
 
 func (eng *engine) Initialize() error {
-	eng.typeRegistry.Add(sprite.Types()...)
-
-	bgType, err := tilegrid.NewBackgroundType()
+	err := SetupTypes(eng.typeRegistry, eng.config.ExtraTypes...)
 	if err != nil {
-		return fmt.Errorf("failed to make background type: %w", err)
-	}
-	eng.typeRegistry.Add(bgType)
-
-	for _, t := range eng.config.ExtraTypes {
-		eng.typeRegistry.Add(t)
+		return fmt.Errorf("failed to set up types: %w", err)
 	}
 
 	if err := eng.resourceManager.Initialize(); err != nil {

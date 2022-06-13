@@ -79,16 +79,16 @@ func (anims *Animations) UnmarshalJSON(d []byte) error {
 }
 
 func (anims *Animations) Initialize(mgr resource.Manager) error {
-	is, err := resource.GetAs[*sprite.SpriteSet](mgr, anims.SpriteSetRef)
+	sh, err := resource.GetAs[*sprite.Sheet](mgr, anims.SpriteSetRef)
 	if err != nil {
 		return fmt.Errorf("failed to get '%s' from dependencies: %w", anims.SpriteSetRef, err)
 	}
 
 	taggedImages := map[string]Images{}
-	tags := is.Tags()
+	tags := sh.Tags()
 
 	for _, tag := range tags {
-		frames, err := FrameImages(tag, is)
+		frames, err := FrameImages(tag, sh)
 		if err != nil {
 			return fmt.Errorf("failed to make frames for tag '%s': %w", tag, err)
 		}

@@ -9,15 +9,16 @@ import (
 )
 
 type Sprite struct {
-	Start topdown.Point[int] `json:"start"`
-	Size  topdown.Size[int]  `json:"size"`
-	Tags  []string           `json:"tags,omitempty"`
+	ID     string             `json:"id"`
+	Origin topdown.Point[int] `json:"origin"`
+	Size   topdown.Size[int]  `json:"size"`
+	Tags   []string           `json:"tags,omitempty"`
 
 	Image *ebiten.Image
 }
 
 func (c *Sprite) Initialize(parent *ebiten.Image) {
-	r := image.Rect(c.Start.X, c.Start.Y, c.Start.X+c.Size.Width, c.Start.Y+c.Size.Height)
+	r := image.Rect(c.Origin.X, c.Origin.Y, c.Origin.X+c.Size.Width, c.Origin.Y+c.Size.Height)
 
 	c.Image = parent.SubImage(r).(*ebiten.Image)
 }

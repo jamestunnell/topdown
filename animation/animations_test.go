@@ -97,7 +97,7 @@ func writeTestImageSet(t *testing.T, dir string, w, h int, sprites ...*sprite.Sp
 	imgPath := writeTestPNG(t, dir, w, h)
 	imgRef := filepath.Base(imgPath)
 
-	ss := sprite.NewSpriteSet(imgRef, sprites...)
+	ss := sprite.NewSheet(imgRef, sprites...)
 
 	f, err := os.CreateTemp(dir, "testSprites*.spriteset")
 

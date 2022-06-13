@@ -8,6 +8,7 @@ require (
 	github.com/hajimehoshi/ebiten/v2 v2.3.3
 	github.com/igrmk/treemap/v2 v2.0.1
 	github.com/magefile/mage v1.13.0
+	github.com/matoous/go-nanoid/v2 v2.0.0
 	github.com/rs/zerolog v1.26.1
 	github.com/stretchr/testify v1.7.2
 	github.com/sxyazi/go-collection v0.0.2
