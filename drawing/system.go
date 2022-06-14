@@ -7,5 +7,6 @@ type System interface {
 	Remove(id string) bool
 	Clear()
 
+	Resize(w, h int)
 	Surface() *ebiten.Image
 }

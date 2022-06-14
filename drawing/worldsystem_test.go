@@ -24,7 +24,10 @@ func TestDrawingSystem(t *testing.T) {
 	d2 := mock_drawing.NewMockWorldDrawable(ctrl)
 
 	d1.EXPECT().WorldLayer().Return(0)
+	d1.EXPECT().WorldSortValue().AnyTimes().Return(5.0)
+
 	d2.EXPECT().WorldLayer().Return(0)
+	d2.EXPECT().WorldSortValue().AnyTimes().Return(10.0)
 
 	s.Add("a", d1)
 	s.Add("b", d2)
@@ -32,8 +35,10 @@ func TestDrawingSystem(t *testing.T) {
 	img := s.Surface()
 	visible := topdown.Rect[float64](0, 0, 100, 100)
 
-	d1.EXPECT().WorldDraw(img, visible)
-	d2.EXPECT().WorldDraw(img, visible)
+	gomock.InOrder(
+		d1.EXPECT().WorldDraw(img, visible),
+		d2.EXPECT().WorldDraw(img, visible),
+	)
 
 	// one layer
 	s.DrawWorld(visible)
@@ -41,12 +46,15 @@ func TestDrawingSystem(t *testing.T) {
 	d3 := mock_drawing.NewMockWorldDrawable(ctrl)
 
 	d3.EXPECT().WorldLayer().Return(1)
+	d3.EXPECT().WorldSortValue().AnyTimes().Return(8.0)
 
 	s.Add("c", d3)
 
-	d1.EXPECT().WorldDraw(img, visible)
-	d2.EXPECT().WorldDraw(img, visible)
-	d3.EXPECT().WorldDraw(img, visible)
+	gomock.InOrder(
+		d1.EXPECT().WorldDraw(img, visible),
+		d2.EXPECT().WorldDraw(img, visible),
+		d3.EXPECT().WorldDraw(img, visible),
+	)
 
 	// two layers
 	s.DrawWorld(visible)

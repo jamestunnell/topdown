@@ -7,6 +7,7 @@ import (
 
 //go:generate mockgen -destination=mock_drawing/mockoverlaysystem.go . OverlaySystem
 
+// OverlaySystem is used to draw a screen-sized HUD/UI overlay image.
 type OverlaySystem interface {
 	System
 
@@ -19,6 +20,7 @@ type overlaySystem struct {
 	layers  *treemap.TreeMap[int, *OverlayLayer]
 }
 
+// NewOverlaySystem makes a new overlay drawing system.
 func NewOverlaySystem(w, h int) OverlaySystem {
 	return &overlaySystem{
 		surface: ebiten.NewImage(w, h),
@@ -26,6 +28,8 @@ func NewOverlaySystem(w, h int) OverlaySystem {
 	}
 }
 
+// Add will add the given object as an overlay drawable if it conforms
+// to the OverlayDrawable interface.
 func (s *overlaySystem) Add(id string, resource interface{}) {
 	d, ok := resource.(OverlayDrawable)
 	if !ok {
@@ -42,6 +46,8 @@ func (s *overlaySystem) Add(id string, resource interface{}) {
 	l.Drawables[id] = d
 }
 
+// Remove will remove a drawable with the given ID if it is found.
+// Returns true if found.
 func (s *overlaySystem) Remove(id string) bool {
 	for it := s.layers.Iterator(); it.Valid(); it.Next() {
 		if _, found := it.Value().Drawables[id]; found {
@@ -54,12 +60,14 @@ func (s *overlaySystem) Remove(id string) bool {
 	return false
 }
 
+// Clear will remove all drawables.
 func (s *overlaySystem) Clear() {
 	for it := s.layers.Iterator(); it.Valid(); it.Next() {
 		it.Value().Clear()
 	}
 }
 
+// DrawOverlay will draw all drawables by layer order.
 func (s *overlaySystem) DrawOverlay() {
 	for it := s.layers.Iterator(); it.Valid(); it.Next() {
 		for _, d := range it.Value().Drawables {
@@ -68,10 +76,12 @@ func (s *overlaySystem) DrawOverlay() {
 	}
 }
 
+// Resize resizes the drawing surface.
 func (s *overlaySystem) Resize(w, h int) {
 	s.surface = ebiten.NewImage(w, h)
 }
 
+// Surface returns the overlay drawing surface.
 func (s *overlaySystem) Surface() *ebiten.Image {
 	return s.surface
 }

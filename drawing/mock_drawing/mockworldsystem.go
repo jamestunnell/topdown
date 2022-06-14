@@ -85,6 +85,18 @@ func (mr *MockWorldSystemMockRecorder) Remove(arg0 interface{}) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Remove", reflect.TypeOf((*MockWorldSystem)(nil).Remove), arg0)
 }
 
+// Resize mocks base method.
+func (m *MockWorldSystem) Resize(arg0, arg1 int) {
+	m.ctrl.T.Helper()
+	m.ctrl.Call(m, "Resize", arg0, arg1)
+}
+
+// Resize indicates an expected call of Resize.
+func (mr *MockWorldSystemMockRecorder) Resize(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Resize", reflect.TypeOf((*MockWorldSystem)(nil).Resize), arg0, arg1)
+}
+
 // Surface mocks base method.
 func (m *MockWorldSystem) Surface() *ebiten.Image {
 	m.ctrl.T.Helper()
