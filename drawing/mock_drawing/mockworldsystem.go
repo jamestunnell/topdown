@@ -72,9 +72,11 @@ func (mr *MockWorldSystemMockRecorder) DrawWorld(arg0 interface{}) *gomock.Call 
 }
 
 // Remove mocks base method.
-func (m *MockWorldSystem) Remove(arg0 string) {
+func (m *MockWorldSystem) Remove(arg0 string) bool {
 	m.ctrl.T.Helper()
-	m.ctrl.Call(m, "Remove", arg0)
+	ret := m.ctrl.Call(m, "Remove", arg0)
+	ret0, _ := ret[0].(bool)
+	return ret0
 }
 
 // Remove indicates an expected call of Remove.

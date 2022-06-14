@@ -27,8 +27,8 @@ func NewWorldSystem(w, h int) WorldSystem {
 	}
 }
 
-func (s *worldSystem) Add(id string, resource interface{}) {
-	d, ok := resource.(WorldDrawable)
+func (s *worldSystem) Add(id string, x interface{}) {
+	d, ok := x.(WorldDrawable)
 	if !ok {
 		return
 	}
@@ -44,13 +44,17 @@ func (s *worldSystem) Add(id string, resource interface{}) {
 		s.layers.Set(order, l)
 	}
 
-	l.Drawables[id] = d
+	l.Add(id, d)
 }
 
-func (s *worldSystem) Remove(id string) {
+func (s *worldSystem) Remove(id string) bool {
 	for it := s.layers.Iterator(); it.Valid(); it.Next() {
-		delete(it.Value().Drawables, id)
+		if it.Value().Remove(id) {
+			return true
+		}
 	}
+
+	return false
 }
 
 func (s *worldSystem) Clear() {
@@ -61,9 +65,7 @@ func (s *worldSystem) Clear() {
 
 func (s *worldSystem) DrawWorld(visible topdown.Rectangle[float64]) {
 	for it := s.layers.Iterator(); it.Valid(); it.Next() {
-		for _, d := range it.Value().Drawables {
-			d.WorldDraw(s.surface, visible)
-		}
+		it.Value().Draw(s.surface, visible)
 	}
 }
 

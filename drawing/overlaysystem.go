@@ -42,10 +42,16 @@ func (s *overlaySystem) Add(id string, resource interface{}) {
 	l.Drawables[id] = d
 }
 
-func (s *overlaySystem) Remove(id string) {
+func (s *overlaySystem) Remove(id string) bool {
 	for it := s.layers.Iterator(); it.Valid(); it.Next() {
-		delete(it.Value().Drawables, id)
+		if _, found := it.Value().Drawables[id]; found {
+			delete(it.Value().Drawables, id)
+
+			return true
+		}
 	}
+
+	return false
 }
 
 func (s *overlaySystem) Clear() {

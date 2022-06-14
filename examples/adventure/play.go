@@ -70,6 +70,10 @@ func (p *Play) Initialize(screenSize topdown.Size[int], mgr resource.Manager) er
 		"world":  p.world,
 	}
 
+	for i, npc := range p.world.NPCs {
+		objs[p.world.NPCRefs[i]] = npc
+	}
+
 	for id, obj := range objs {
 		p.animation.Add(id, obj)
 		p.control.Add(id, obj)

@@ -1,0 +1,24 @@
+{
+	"imageRef": "assets/characters.png",
+	"sprites": [
+		{"id": "DbMB", "origin": {"y": 0, "x": 128}, "size": {"w": 32, "h": 48}, "tags": ["walkDown","idleDown"]},
+		{"id": "pNfI", "origin": {"y": 0, "x": 160}, "size": {"w": 32, "h": 48}, "tags": ["walkDown"]},
+		{"id": "grYW", "origin": {"y": 0, "x": 192}, "size": {"w": 32, "h": 48}, "tags": ["walkDown"]},
+		{"id": "Lr8A", "origin": {"y": 0, "x": 224}, "size": {"w": 32, "h": 48}, "tags": ["walkDown"]},
+		
+		{"id": "uLsF", "origin": {"y": 48, "x": 128}, "size": {"w": 32, "h": 48}, "tags": ["walkLeft","idleLeft"]},
+		{"id": "NTi8", "origin": {"y": 48, "x": 160}, "size": {"w": 32, "h": 48}, "tags": ["walkLeft"]},
+		{"id": "AwiK", "origin": {"y": 48, "x": 192}, "size": {"w": 32, "h": 48}, "tags": ["walkLeft"]},
+		{"id": "3S3B", "origin": {"y": 48, "x": 224}, "size": {"w": 32, "h": 48}, "tags": ["walkLeft"]},
+
+		{"id": "E9Bv", "origin": {"y": 96, "x": 128}, "size": {"w": 32, "h": 48}, "tags": ["walkRight","idleRight"]},
+		{"id": "9GcX", "origin": {"y": 96, "x": 160}, "size": {"w": 32, "h": 48}, "tags": ["walkRight"]},
+		{"id": "IABg", "origin": {"y": 96, "x": 192}, "size": {"w": 32, "h": 48}, "tags": ["walkRight"]},
+		{"id": "1k8n", "origin": {"y": 96, "x": 224}, "size": {"w": 32, "h": 48}, "tags": ["walkRight"]},
+
+		{"id": "GLGf", "origin": {"y": 144, "x": 128}, "size": {"w": 32, "h": 48}, "tags": ["walkUp","idleUp"]},
+		{"id": "C3jC", "origin": {"y": 144, "x": 160}, "size": {"w": 32, "h": 48}, "tags": ["walkUp"]},
+		{"id": "vAZ9", "origin": {"y": 144, "x": 192}, "size": {"w": 32, "h": 48}, "tags": ["walkUp"]},
+		{"id": "aKU7", "origin": {"y": 144, "x": 224}, "size": {"w": 32, "h": 48}, "tags": ["walkUp"]}
+	]
+}

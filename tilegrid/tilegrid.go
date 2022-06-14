@@ -159,6 +159,10 @@ func (tg *TileGrid) WorldLayer() int {
 	return drawing.LayerBackground
 }
 
+func (tg *TileGrid) WorldSortValue() float64 {
+	return tg.worldArea.Max.Y
+}
+
 func (tg *TileGrid) VisibleColumns(visible topdown.Rectangle[float64]) (int, int) {
 	first := int((visible.Min.X - tg.Origin.X) / float64(tg.TileSize.Width))
 	last := int((visible.Max.X - tg.Origin.X) / float64(tg.TileSize.Width))

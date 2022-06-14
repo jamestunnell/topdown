@@ -71,9 +71,11 @@ func (mr *MockOverlaySystemMockRecorder) DrawOverlay() *gomock.Call {
 }
 
 // Remove mocks base method.
-func (m *MockOverlaySystem) Remove(arg0 string) {
+func (m *MockOverlaySystem) Remove(arg0 string) bool {
 	m.ctrl.T.Helper()
-	m.ctrl.Call(m, "Remove", arg0)
+	ret := m.ctrl.Call(m, "Remove", arg0)
+	ret0, _ := ret[0].(bool)
+	return ret0
 }
 
 // Remove indicates an expected call of Remove.

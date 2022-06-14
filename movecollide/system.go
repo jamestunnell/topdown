@@ -62,15 +62,17 @@ func NewSystem(worldWidth, worldHeight float64) (System, error) {
 	}
 
 	// add boundaries to the collision space
-	nw := cirno.NewVector(0, 0)
-	ne := cirno.NewVector(worldWidth, 0)
-	se := cirno.NewVector(worldWidth, worldHeight)
-	sw := cirno.NewVector(0, worldHeight)
+	nw := topdown.Pt[float64](0, 0)
+	ne := topdown.Pt(worldWidth, 0)
+	se := topdown.Pt(worldWidth, worldHeight)
+	sw := topdown.Pt(0, worldHeight)
 
 	var addLineErr error
 
-	addLine := func(a, b cirno.Vector, id string) bool {
-		line, err := cirno.NewLine(a, b)
+	addLine := func(a, b topdown.Point[float64], id string) bool {
+		v1 := cirno.NewVector(a.X, a.Y)
+		v2 := cirno.NewVector(b.X, b.Y)
+		line, err := cirno.NewLine(v1, v2)
 
 		line.SetIdentity(ColliderShapeID)
 
@@ -90,6 +92,8 @@ func NewSystem(worldWidth, worldHeight float64) (System, error) {
 
 			return false
 		}
+
+		log.Debug().Stringer("a", a).Stringer("b", b).Msg("added boundary line")
 
 		return true
 	}

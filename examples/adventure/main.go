@@ -22,6 +22,7 @@ func main() {
 	}
 	types := []resource.Type{
 		&PlayerType{},
+		&NonPlayerType{},
 		&WorldType{},
 	}
 	cfg := &engine.Config{

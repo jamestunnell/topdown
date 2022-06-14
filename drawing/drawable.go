@@ -12,6 +12,7 @@ import (
 // on the world surface.
 type WorldDrawable interface {
 	WorldLayer() int
+	WorldSortValue() float64
 	WorldDraw(world *ebiten.Image, visible topdown.Rectangle[float64])
 }
 

@@ -1,0 +1,23 @@
+{
+  "name": "Fay",
+  "moveAnimationType": "AllDirections",
+  "animations": {
+    "spriteSetRef": "char2.spritesheet",
+    "frameDuration": "150ms"
+  },
+  "position": {
+    "x": 200,
+    "y": 200
+  },
+  "colliderSize": {
+    "w": 17,
+    "h": 17
+  },
+  "inventory":{
+    "dimensions": {
+      "length": 0.25,
+      "width": 0.25,
+      "height": 0.25
+    }
+  }
+}

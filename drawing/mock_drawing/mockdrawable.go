@@ -61,6 +61,20 @@ func (mr *MockWorldDrawableMockRecorder) WorldLayer() *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "WorldLayer", reflect.TypeOf((*MockWorldDrawable)(nil).WorldLayer))
 }
 
+// WorldSortValue mocks base method.
+func (m *MockWorldDrawable) WorldSortValue() float64 {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "WorldSortValue")
+	ret0, _ := ret[0].(float64)
+	return ret0
+}
+
+// WorldSortValue indicates an expected call of WorldSortValue.
+func (mr *MockWorldDrawableMockRecorder) WorldSortValue() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "WorldSortValue", reflect.TypeOf((*MockWorldDrawable)(nil).WorldSortValue))
+}
+
 // MockOverlayDrawable is a mock of OverlayDrawable interface.
 type MockOverlayDrawable struct {
 	ctrl     *gomock.Controller

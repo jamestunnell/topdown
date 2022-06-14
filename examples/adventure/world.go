@@ -14,9 +14,12 @@ type WorldType struct {
 
 type World struct {
 	Size          topdown.Size[float64] `json:"size"`
-	BackgroundRef string                `json:"backgroundRef"`
+	BackgroundRef string                `json:"background"`
+	NPCRefs       []string              `json:"npcs"`
 
 	*tilegrid.Background
+
+	NPCs []*NonPlayer
 }
 
 func (t *WorldType) Name() string {
@@ -33,7 +36,13 @@ func (m *World) Initialize(mgr resource.Manager) error {
 		return fmt.Errorf("failed to get background: %w", err)
 	}
 
+	npcs, err := resource.GetManyAs[*NonPlayer](mgr, m.NPCRefs)
+	if err != nil {
+		return fmt.Errorf("failed to get NPCs: %w", err)
+	}
+
 	m.Background = bg
+	m.NPCs = npcs
 
 	return nil
 }
