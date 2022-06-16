@@ -123,11 +123,11 @@ func TestCameraConvertCoordsOutOfArea(t *testing.T) {
 
 	assert.False(t, ok)
 
-	_, ok = cam.ConvertScreenToWorld(topdown.Pt(-1, 0))
+	_, ok = cam.ConvertScreenToWorld(topdown.Pt[float64](-1, 0))
 
 	assert.False(t, ok)
 
-	_, ok = cam.ConvertScreenToWorld(topdown.Pt(0, -1))
+	_, ok = cam.ConvertScreenToWorld(topdown.Pt[float64](0, -1))
 
 	assert.False(t, ok)
 }
@@ -140,18 +140,18 @@ func TestCameraConvertCoordsDefaultZoom(t *testing.T) {
 	testCameraConvertCoordsOK(
 		t, "world pos (0,0) - screen center", cam, cam.WorldPosition(), cam.ScreenPosition())
 	testCameraConvertCoordsOK(
-		t, "world pos (0,0) - screen start", cam, topdown.Pt[float64](-250, -150), topdown.Pt(0, 0))
+		t, "world pos (0,0) - screen start", cam, topdown.Pt[float64](-250, -150), topdown.Pt[float64](0, 0))
 	testCameraConvertCoordsOK(
-		t, "world pos (0,0) - screen end", cam, topdown.Pt[float64](250, 150), topdown.Pt(500, 300))
+		t, "world pos (0,0) - screen end", cam, topdown.Pt[float64](250, 150), topdown.Pt[float64](500, 300))
 
 	cam.Move(topdown.Pt[float64](100, 50))
 
 	testCameraConvertCoordsOK(
 		t, "world pos (100,50) - screen center", cam, topdown.Pt[float64](100, 50), cam.ScreenPosition())
 	testCameraConvertCoordsOK(
-		t, "world pos (100,50) - screen start", cam, topdown.Pt[float64](-150, -100), topdown.Pt(0, 0))
+		t, "world pos (100,50) - screen start", cam, topdown.Pt[float64](-150, -100), topdown.Pt[float64](0, 0))
 	testCameraConvertCoordsOK(
-		t, "world pos (100,50) - screen end", cam, topdown.Pt[float64](350, 200), topdown.Pt(500, 300))
+		t, "world pos (100,50) - screen end", cam, topdown.Pt[float64](350, 200), topdown.Pt[float64](500, 300))
 }
 
 func TestCameraConvertCoordsHalfZoom(t *testing.T) {
@@ -165,18 +165,18 @@ func TestCameraConvertCoordsHalfZoom(t *testing.T) {
 	testCameraConvertCoordsOK(
 		t, "world pos (0,0) - screen center", cam, cam.WorldPosition(), cam.ScreenPosition())
 	testCameraConvertCoordsOK(
-		t, "world pos (0,0) - screen start", cam, topdown.Pt[float64](-500, -300), topdown.Pt(0, 0))
+		t, "world pos (0,0) - screen start", cam, topdown.Pt[float64](-500, -300), topdown.Pt[float64](0, 0))
 	testCameraConvertCoordsOK(
-		t, "world pos (0,0) - screen end", cam, topdown.Pt[float64](500, 300), topdown.Pt(500, 300))
+		t, "world pos (0,0) - screen end", cam, topdown.Pt[float64](500, 300), topdown.Pt[float64](500, 300))
 
 	cam.Move(topdown.Pt[float64](100, 50))
 
 	testCameraConvertCoordsOK(
 		t, "world pos (100,50) - screen center", cam, topdown.Pt[float64](100, 50), cam.ScreenPosition())
 	testCameraConvertCoordsOK(
-		t, "world pos (100,50) - screen start", cam, topdown.Pt[float64](-400, -250), topdown.Pt(0, 0))
+		t, "world pos (100,50) - screen start", cam, topdown.Pt[float64](-400, -250), topdown.Pt[float64](0, 0))
 	testCameraConvertCoordsOK(
-		t, "world pos (100,50) - screen end", cam, topdown.Pt[float64](600, 350), topdown.Pt(500, 300))
+		t, "world pos (100,50) - screen end", cam, topdown.Pt[float64](600, 350), topdown.Pt[float64](500, 300))
 }
 
 func testCameraConvertCoordsOK(
@@ -184,7 +184,7 @@ func testCameraConvertCoordsOK(
 	name string,
 	cam camera.Camera,
 	worldPos topdown.Point[float64],
-	screenPos topdown.Point[int]) {
+	screenPos topdown.Point[float64]) {
 	t.Run(name, func(t *testing.T) {
 		actualScreenPos, ok := cam.ConvertWorldToScreen(worldPos)
 

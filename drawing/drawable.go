@@ -2,7 +2,6 @@ package drawing
 
 import (
 	"github.com/hajimehoshi/ebiten/v2"
-
 	"github.com/jamestunnell/topdown"
 )
 
@@ -13,7 +12,7 @@ import (
 type WorldDrawable interface {
 	WorldLayer() int
 	WorldSortValue() float64
-	WorldDraw(world *ebiten.Image, visible topdown.Rectangle[float64])
+	WorldDraw(surface *ebiten.Image, visible topdown.Rectangle[float64])
 }
 
 // OverlayDrawable is the component used in the drawing system to draw

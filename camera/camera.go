@@ -5,17 +5,17 @@ import (
 	"strconv"
 
 	"github.com/hajimehoshi/ebiten/v2"
-	"github.com/igrmk/treemap/v2"
 
 	"github.com/jamestunnell/topdown"
+	"github.com/jamestunnell/topdown/debug"
 )
 
 type Camera interface {
 	// ScreenPosition returns the camera position in screen space (post-zoom).
 	// Should always be screen center
-	ScreenPosition() topdown.Point[int]
+	ScreenPosition() topdown.Point[float64]
 	// ScreenArea returns the camera area in screen space (post-zoom).
-	ScreenArea() topdown.Rectangle[int]
+	ScreenArea() topdown.Rectangle[float64]
 	// WorldPosition gets the camera position in world space (pre-zoom).
 	WorldPosition() topdown.Point[float64]
 	// WorldArea returns the camera area in world space (pre-zoom).
@@ -28,10 +28,10 @@ type Camera interface {
 	MinZoomLevel() float64
 	// ConvertWorldToScreen converts the given world position to screen position.
 	// Returns false if the world position is outside of the camera world area.
-	ConvertWorldToScreen(worldPos topdown.Point[float64]) (topdown.Point[int], bool)
+	ConvertWorldToScreen(worldPos topdown.Point[float64]) (topdown.Point[float64], bool)
 	// ConvertScreenToWorld converts the given screen position to world position.
 	// Returns false if the screen position is outside of the camera display area.
-	ConvertScreenToWorld(screenPos topdown.Point[int]) (topdown.Point[float64], bool)
+	ConvertScreenToWorld(screenPos topdown.Point[float64]) (topdown.Point[float64], bool)
 
 	// Resize resizes the camera.
 	Resize(size topdown.Size[int]) error
@@ -55,16 +55,16 @@ type camera struct {
 	zoom       float64
 	size       topdown.Size[int]
 	worldArea  topdown.Rectangle[float64]
-	screenArea topdown.Rectangle[int]
+	screenArea topdown.Rectangle[float64]
 	surface    *ebiten.Image
-	debugInfo  *treemap.TreeMap[string, string]
+	debugData  *debug.Dataset
 }
 
 func New(size topdown.Size[int]) (Camera, error) {
 	cam := &camera{
 		position:  topdown.Pt[float64](0, 0),
 		zoom:      1,
-		debugInfo: treemap.New[string, string](),
+		debugData: debug.NewDataset(),
 	}
 
 	if err := cam.Resize(size); err != nil {
@@ -74,11 +74,13 @@ func New(size topdown.Size[int]) (Camera, error) {
 	return cam, nil
 }
 
-func (c *camera) ScreenPosition() topdown.Point[int] {
-	return c.size.Center()
+func (c *camera) ScreenPosition() topdown.Point[float64] {
+	p := c.size.Center()
+
+	return topdown.Pt(float64(p.X), float64(p.Y))
 }
 
-func (c *camera) ScreenArea() topdown.Rectangle[int] {
+func (c *camera) ScreenArea() topdown.Rectangle[float64] {
 	return c.screenArea
 }
 
@@ -109,28 +111,27 @@ func (c *camera) MinZoomLevel() float64 {
 	return MinZoomLevel(c.size)
 }
 
-func (c *camera) ConvertWorldToScreen(worldPos topdown.Point[float64]) (topdown.Point[int], bool) {
+func (c *camera) ConvertWorldToScreen(worldPos topdown.Point[float64]) (topdown.Point[float64], bool) {
 	if !(worldPos.In(c.worldArea) || worldPos.Equal(c.worldArea.Max)) {
-		return topdown.Pt(0, 0), false
+		return topdown.Pt(0.0, 0.0), false
 	}
 
-	fracX := float64(worldPos.X-c.worldArea.Min.X) / float64(c.worldArea.Dx())
-	fracY := float64(worldPos.Y-c.worldArea.Min.Y) / float64(c.worldArea.Dy())
-	x := c.screenArea.Min.X + int(float64(c.screenArea.Dx())*fracX)
-	y := c.screenArea.Min.Y + int(float64(c.screenArea.Dy())*fracY)
+	fracX := (worldPos.X - c.worldArea.Min.X) / c.worldArea.Dx()
+	fracY := (worldPos.Y - c.worldArea.Min.Y) / c.worldArea.Dy()
+	x := c.screenArea.Dx() * fracX
+	y := c.screenArea.Dy() * fracY
 
 	return topdown.Pt(x, y), true
 }
 
-func (c *camera) ConvertScreenToWorld(screenPos topdown.Point[int]) (topdown.Point[float64], bool) {
-	screenArea := c.ScreenArea()
-	if !(screenPos.In(screenArea) || screenPos.Equal(screenArea.Max)) {
+func (c *camera) ConvertScreenToWorld(screenPos topdown.Point[float64]) (topdown.Point[float64], bool) {
+	if !(screenPos.In(c.screenArea) || screenPos.Equal(c.screenArea.Max)) {
 		return topdown.Pt[float64](0, 0), false
 	}
 
 	worldArea := c.worldArea
-	fracX := float64(screenPos.X-screenArea.Min.X) / float64(screenArea.Dx())
-	fracY := float64(screenPos.Y-screenArea.Min.Y) / float64(screenArea.Dy())
+	fracX := screenPos.X / c.screenArea.Dx()
+	fracY := screenPos.Y / c.screenArea.Dy()
 	x := worldArea.Min.X + worldArea.Dx()*fracX
 	y := worldArea.Min.Y + worldArea.Dy()*fracY
 
@@ -143,7 +144,7 @@ func (c *camera) Resize(size topdown.Size[int]) error {
 	}
 
 	c.size = size
-	c.screenArea = topdown.Rect(0, 0, size.Width, size.Height)
+	c.screenArea = topdown.Rect(0.0, 0.0, float64(size.Width), float64(size.Height))
 
 	minZoom := c.MinZoomLevel()
 	if c.zoom < minZoom {
@@ -156,10 +157,7 @@ func (c *camera) Resize(size topdown.Size[int]) error {
 		c.surface.Dispose()
 	}
 
-	zoomedWidth := float64(size.Width) / c.zoom
-	zoomedHeight := float64(size.Height) / c.zoom
-
-	c.surface = ebiten.NewImage(int(zoomedWidth), int(zoomedHeight))
+	c.surface = ebiten.NewImage(size.Width, size.Height)
 
 	return nil
 }
@@ -201,12 +199,12 @@ func (c *camera) Blit(screen *ebiten.Image) {
 	screen.DrawImage(c.surface, op)
 }
 
-func (c *camera) DebugInfo() *treemap.TreeMap[string, string] {
-	c.debugInfo.Set("x", strconv.FormatFloat(c.position.X, 'f', 2, 64))
-	c.debugInfo.Set("y", strconv.FormatFloat(c.position.Y, 'f', 2, 64))
-	c.debugInfo.Set("zoom", strconv.FormatFloat(c.zoom, 'f', 2, 64))
-	c.debugInfo.Set("w", strconv.FormatFloat(c.worldArea.Dx(), 'f', 2, 64))
-	c.debugInfo.Set("h", strconv.FormatFloat(c.worldArea.Dy(), 'f', 2, 64))
+func (c *camera) DebugData() *debug.Dataset {
+	c.debugData.Set("x", strconv.FormatFloat(c.position.X, 'f', 2, 64))
+	c.debugData.Set("y", strconv.FormatFloat(c.position.Y, 'f', 2, 64))
+	c.debugData.Set("zoom", strconv.FormatFloat(c.zoom, 'f', 2, 64))
+	c.debugData.Set("w", strconv.FormatFloat(c.worldArea.Dx(), 'f', 2, 64))
+	c.debugData.Set("h", strconv.FormatFloat(c.worldArea.Dy(), 'f', 2, 64))
 
-	return c.debugInfo
+	return c.debugData
 }

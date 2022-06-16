@@ -2,6 +2,7 @@ package tilegrid
 
 import (
 	"fmt"
+	"math"
 	"strconv"
 	"strings"
 
@@ -93,7 +94,7 @@ func (tg *TileGrid) Initialize(mgr resource.Manager) error {
 	dX := float64(tg.nCols * tg.TileSize.Width)
 	dY := float64(tg.nRows * tg.TileSize.Height)
 	tg.worldArea = topdown.Rectangle[float64]{
-		Min: topdown.Pt(tg.Origin.X, tg.Origin.Y),
+		Min: tg.Origin,
 		Max: topdown.Pt(tg.Origin.X+dX, tg.Origin.Y+dY),
 	}
 
@@ -165,14 +166,14 @@ func (tg *TileGrid) WorldSortValue() float64 {
 
 func (tg *TileGrid) VisibleColumns(visible topdown.Rectangle[float64]) (int, int) {
 	first := int((visible.Min.X - tg.Origin.X) / float64(tg.TileSize.Width))
-	last := int((visible.Max.X - tg.Origin.X) / float64(tg.TileSize.Width))
+	last := int(math.Ceil((visible.Max.X - tg.Origin.X) / float64(tg.TileSize.Width)))
 
 	return mathutil.Clamp(first, 0, tg.nCols-1), mathutil.Clamp(last, 0, tg.nCols-1)
 }
 
 func (tg *TileGrid) VisibleRows(visible topdown.Rectangle[float64]) (int, int) {
 	first := int((visible.Min.Y - tg.Origin.Y) / float64(tg.TileSize.Height))
-	last := int((visible.Max.Y - tg.Origin.Y) / float64(tg.TileSize.Height))
+	last := int(math.Ceil((visible.Max.Y - tg.Origin.Y) / float64(tg.TileSize.Height)))
 
 	return mathutil.Clamp(first, 0, tg.nRows-1), mathutil.Clamp(last, 0, tg.nRows-1)
 }
@@ -187,22 +188,22 @@ func (tg *TileGrid) WorldDraw(worldSurface *ebiten.Image, visible topdown.Rectan
 	firstColumn, lastColumn := tg.VisibleColumns(visible)
 	firstRow, lastRow := tg.VisibleRows(visible)
 
+	offset := tg.Origin.Sub(visible.Min)
+
 	for row := firstRow; row <= lastRow; row++ {
 		for col := firstColumn; col <= lastColumn; col++ {
-			tileImg := tg.rows[row].Tiles[col].Image
+			tile := tg.rows[row].Tiles[col]
 			opts := &ebiten.DrawImageOptions{}
-			sx := tg.rows[row].Tiles[col].XScale
-			sy := tg.rows[row].Tiles[col].YScale
 			tx := float64(col * tg.TileSize.Width)
 			ty := float64(row * tg.TileSize.Height)
 
-			if sx != 1 || sy != 1 {
-				opts.GeoM.Scale(sx, sy)
+			if tile.XScale != 1 || tile.YScale != 1 {
+				opts.GeoM.Scale(tile.XScale, tile.YScale)
 			}
 
-			opts.GeoM.Translate(tx, ty)
+			opts.GeoM.Translate(tx+offset.X, ty+offset.Y)
 
-			worldSurface.DrawImage(tileImg, opts)
+			worldSurface.DrawImage(tile.Image, opts)
 		}
 	}
 }

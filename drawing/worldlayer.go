@@ -9,6 +9,7 @@ import (
 
 // WorldLayer is used to organize the world into layers.
 type WorldLayer struct {
+	order     int
 	ids       []string
 	drawables []WorldDrawable
 }
@@ -16,9 +17,15 @@ type WorldLayer struct {
 // NewWorldLayer makes a new world layer.
 func NewWorldLayer(order int) *WorldLayer {
 	return &WorldLayer{
+		order:     order,
 		ids:       []string{},
 		drawables: []WorldDrawable{},
 	}
+}
+
+// Order gets the layer order.
+func (l *WorldLayer) Order() int {
+	return l.order
 }
 
 // Add adds a drawable with ID.
@@ -47,7 +54,7 @@ func (l *WorldLayer) Clear() {
 	l.drawables = nil
 }
 
-// Draw draws the layer.
+// Draw draws the layer drawables in sorted order.
 func (l *WorldLayer) Draw(surface *ebiten.Image, visible topdown.Rectangle[float64]) {
 	n := len(l.drawables)
 	order := sliceutil.Make(n, func(i int) int { return i })

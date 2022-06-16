@@ -1,11 +1,13 @@
 package main
 
 import (
+	"strconv"
 	"time"
 
 	"github.com/hajimehoshi/ebiten/v2"
 
 	"github.com/jamestunnell/topdown"
+	"github.com/jamestunnell/topdown/debug"
 	"github.com/jamestunnell/topdown/input"
 	"github.com/jamestunnell/topdown/jsonfile"
 	"github.com/jamestunnell/topdown/resource"
@@ -16,11 +18,13 @@ type PlayerType struct {
 
 type Player struct {
 	*Character
+
+	debugData *debug.Dataset
 }
 
 const (
 	OneOverSqrtTwo = 0.7071067811865475244
-	PlayerSpeed    = 65.0
+	PlayerSpeed    = 25.0
 )
 
 func (t *PlayerType) Name() string {
@@ -31,6 +35,11 @@ func (t *PlayerType) Load(path string) (resource.Resource, error) {
 	return jsonfile.Read[*Player](path)
 }
 
+func (p *Player) Initialize(mgr resource.Manager) error {
+	p.debugData = debug.NewDataset()
+
+	return p.Character.Initialize(mgr)
+}
 func (p *Player) WatchKeys() []ebiten.Key {
 	return []ebiten.Key{
 		ebiten.KeyArrowLeft,
@@ -56,6 +65,13 @@ func (p *Player) Move(moveDiff topdown.Vector) {
 
 func (p *Player) UpdateAnimation(delta time.Duration) {
 	p.Animations.Controller.Update(delta)
+}
+
+func (p *Player) DebugData() *debug.Dataset {
+	p.debugData.Set("x", strconv.FormatFloat(p.Position.X, 'f', 2, 64))
+	p.debugData.Set("y", strconv.FormatFloat(p.Position.Y, 'f', 2, 64))
+
+	return p.debugData
 }
 
 func (p *Player) controlMovement(deltaSec float64, inputMgr input.Manager) {

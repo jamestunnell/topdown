@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/golang/mock/gomock"
+	"github.com/hajimehoshi/ebiten/v2"
 
 	"github.com/jamestunnell/topdown"
 	"github.com/jamestunnell/topdown/drawing"
@@ -11,15 +12,16 @@ import (
 )
 
 func TestDrawingSystemNoDrawables(t *testing.T) {
-	s := drawing.NewWorldSystem(100, 100)
+	sys := drawing.NewWorldSystem(200, 200)
+	surf := ebiten.NewImage(100, 100)
 
-	s.DrawWorld(topdown.Rect[float64](0, 0, 100, 100))
+	sys.DrawWorld(surf, topdown.Rect[float64](0, 0, 100, 100))
 }
 
 func TestDrawingSystem(t *testing.T) {
 	ctrl := gomock.NewController(t)
 
-	s := drawing.NewWorldSystem(100, 100)
+	s := drawing.NewWorldSystem(300, 3000)
 	d1 := mock_drawing.NewMockWorldDrawable(ctrl)
 	d2 := mock_drawing.NewMockWorldDrawable(ctrl)
 
@@ -32,7 +34,7 @@ func TestDrawingSystem(t *testing.T) {
 	s.Add("a", d1)
 	s.Add("b", d2)
 
-	img := s.Surface()
+	img := ebiten.NewImage(100, 00)
 	visible := topdown.Rect[float64](0, 0, 100, 100)
 
 	gomock.InOrder(
@@ -41,7 +43,7 @@ func TestDrawingSystem(t *testing.T) {
 	)
 
 	// one layer
-	s.DrawWorld(visible)
+	s.DrawWorld(img, visible)
 
 	d3 := mock_drawing.NewMockWorldDrawable(ctrl)
 
@@ -57,10 +59,10 @@ func TestDrawingSystem(t *testing.T) {
 	)
 
 	// two layers
-	s.DrawWorld(visible)
+	s.DrawWorld(img, visible)
 
 	s.Clear()
 
 	// nothing to draw
-	s.DrawWorld(visible)
+	s.DrawWorld(img, visible)
 }

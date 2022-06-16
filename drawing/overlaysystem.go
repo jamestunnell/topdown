@@ -2,86 +2,105 @@ package drawing
 
 import (
 	"github.com/hajimehoshi/ebiten/v2"
-	"github.com/igrmk/treemap/v2"
+	"github.com/rs/zerolog/log"
+	"golang.org/x/exp/slices"
 )
 
 //go:generate mockgen -destination=mock_drawing/mockoverlaysystem.go . OverlaySystem
 
 // OverlaySystem is used to draw a screen-sized HUD/UI overlay image.
 type OverlaySystem interface {
-	System
+	Add(id string, r interface{})
+	Remove(id string)
+	Clear()
 
-	DrawOverlay()
-	Resize(w, h int)
+	DrawOverlay(screen *ebiten.Image)
 }
 
 type overlaySystem struct {
-	surface *ebiten.Image
-	layers  *treemap.TreeMap[int, *OverlayLayer]
+	layers            []*OverlayLayer
+	debugPrintables   []DebugPrintable
+	debugPrintableIDs []string
 }
 
 // NewOverlaySystem makes a new overlay drawing system.
-func NewOverlaySystem(w, h int) OverlaySystem {
+func NewOverlaySystem() OverlaySystem {
 	return &overlaySystem{
-		surface: ebiten.NewImage(w, h),
-		layers:  treemap.New[int, *OverlayLayer](),
+		layers:            []*OverlayLayer{},
+		debugPrintables:   []DebugPrintable{},
+		debugPrintableIDs: []string{},
 	}
 }
 
 // Add will add the given object as an overlay drawable if it conforms
 // to the OverlayDrawable interface.
-func (s *overlaySystem) Add(id string, resource interface{}) {
-	d, ok := resource.(OverlayDrawable)
-	if !ok {
-		return
+func (s *overlaySystem) Add(id string, x interface{}) {
+	d, ok := x.(OverlayDrawable)
+	if ok {
+		order := d.OverlayLayer()
+
+		idx := slices.IndexFunc(s.layers, func(l *OverlayLayer) bool {
+			return l.Order() == order
+		})
+
+		if idx == -1 {
+			l := NewOverlayLayer(order)
+
+			s.layers = append(s.layers, l)
+
+			slices.SortFunc(s.layers, func(a, b *OverlayLayer) bool {
+				return a.Order() < b.Order()
+			})
+
+			idx = slices.IndexFunc(s.layers, func(l *OverlayLayer) bool {
+				return l.Order() == order
+			})
+		}
+
+		s.layers[idx].Add(id, d)
+
+		log.Debug().Str("id", id).Msg("added overlay drawable")
 	}
 
-	order := d.OverlayLayer()
+	dp, ok := x.(DebugPrintable)
+	if ok {
+		s.debugPrintables = append(s.debugPrintables, dp)
+		s.debugPrintableIDs = append(s.debugPrintableIDs, id)
 
-	l, found := s.layers.Get(order)
-	if !found {
-		l = NewOverlayLayer(order)
+		log.Debug().Str("id", id).Msg("added debug printables")
 	}
-
-	l.Drawables[id] = d
 }
 
-// Remove will remove a drawable with the given ID if it is found.
-// Returns true if found.
-func (s *overlaySystem) Remove(id string) bool {
-	for it := s.layers.Iterator(); it.Valid(); it.Next() {
-		if _, found := it.Value().Drawables[id]; found {
-			delete(it.Value().Drawables, id)
-
-			return true
+// Remove will remove a drawable or debug printable with the given
+// ID if it is found.
+func (s *overlaySystem) Remove(id string) {
+	for _, l := range s.layers {
+		if l.Remove(id) {
+			break
 		}
 	}
 
-	return false
+	if idx := slices.Index(s.debugPrintableIDs, id); idx != -1 {
+		slices.Delete(s.debugPrintableIDs, idx, idx+1)
+		slices.Delete(s.debugPrintables, idx, idx+1)
+	}
 }
 
 // Clear will remove all drawables.
 func (s *overlaySystem) Clear() {
-	for it := s.layers.Iterator(); it.Valid(); it.Next() {
-		it.Value().Clear()
+	for _, l := range s.layers {
+		l.Clear()
 	}
+
+	s.debugPrintableIDs = []string{}
+	s.debugPrintables = []DebugPrintable{}
 }
 
 // DrawOverlay will draw all drawables by layer order.
-func (s *overlaySystem) DrawOverlay() {
-	for it := s.layers.Iterator(); it.Valid(); it.Next() {
-		for _, d := range it.Value().Drawables {
-			d.OverlayDraw(s.surface)
-		}
+func (s *overlaySystem) DrawOverlay(screen *ebiten.Image) {
+	for _, l := range s.layers {
+		l.Draw(screen)
 	}
-}
 
-// Resize resizes the drawing surface.
-func (s *overlaySystem) Resize(w, h int) {
-	s.surface = ebiten.NewImage(w, h)
-}
-
-// Surface returns the overlay drawing surface.
-func (s *overlaySystem) Surface() *ebiten.Image {
-	return s.surface
+	DebugPrint(screen, s.debugPrintableIDs, s.debugPrintables)
 }

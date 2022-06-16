@@ -2,9 +2,7 @@ package main
 
 import (
 	"fmt"
-	"image"
 	"image/color"
-	"math"
 	"time"
 
 	"github.com/hajimehoshi/ebiten/v2"
@@ -23,13 +21,14 @@ import (
 type Play struct {
 	PlayerRef, WorldRef string
 
-	player       *Player
-	world        *World
-	cam          camera.Camera
-	worldDrawing drawing.WorldSystem
-	animation    animation.System
-	control      control.System
-	moveCollide  movecollide.System
+	player         *Player
+	world          *World
+	cam            camera.Camera
+	worldDrawing   drawing.WorldSystem
+	overlayDrawing drawing.OverlaySystem
+	animation      animation.System
+	control        control.System
+	moveCollide    movecollide.System
 
 	screenSize topdown.Size[int]
 }
@@ -60,12 +59,14 @@ func (p *Play) Initialize(screenSize topdown.Size[int], mgr resource.Manager) er
 	p.cam = cam
 
 	p.worldDrawing = drawing.NewWorldSystem(int(world.Size.Width), int(world.Size.Height))
+	p.overlayDrawing = drawing.NewOverlaySystem()
 	p.moveCollide = moveCollide
 	p.control = control.NewSystem()
 	p.animation = animation.NewSystem()
 	p.screenSize = screenSize
 
 	objs := map[string]any{
+		"camera": cam,
 		"player": p.player,
 		"world":  p.world,
 	}
@@ -78,6 +79,7 @@ func (p *Play) Initialize(screenSize topdown.Size[int], mgr resource.Manager) er
 		p.animation.Add(id, obj)
 		p.control.Add(id, obj)
 		p.worldDrawing.Add(id, obj)
+		p.overlayDrawing.Add(id, obj)
 		p.moveCollide.Add(id, obj)
 	}
 
@@ -107,44 +109,20 @@ func (p *Play) Update() (engine.Mode, error) {
 }
 
 func (p *Play) Draw(screen *ebiten.Image) {
-	surface := p.cam.DrawSurface()
+	camSurface := p.cam.DrawSurface()
 
 	// Clear camera surface
-	surface.Clear()
-	surface.Fill(color.Black)
+	camSurface.Clear()
+	camSurface.Fill(color.Black)
 
 	visible := p.cam.WorldArea()
 
-	p.worldDrawing.DrawWorld(visible)
-
-	opts := &ebiten.DrawImageOptions{}
-
-	translateX := float64(0)
-	translateY := float64(0)
-
-	if visible.Min.X < 0 {
-		translateX = float64(-visible.Min.X)
-	}
-
-	if visible.Min.Y < 0 {
-		translateY = float64(-visible.Min.Y)
-	}
-
-	if translateX != 0 || translateY != 0 {
-		opts.GeoM.Translate(translateX, translateY)
-	}
-
-	rect := image.Rect(
-		int(math.Round(visible.Min.X)), int(math.Round(visible.Min.Y)),
-		int(math.Round(visible.Max.X)), int(math.Round(visible.Max.Y)))
-
-	subImg := p.worldDrawing.Surface().SubImage(rect).(*ebiten.Image)
-
-	// draws visible world to camera drawing surface
-	surface.DrawImage(subImg, opts)
+	p.worldDrawing.DrawWorld(camSurface, visible)
 
 	// Draw camera to screen and zoom
 	p.cam.Blit(screen)
+
+	p.overlayDrawing.DrawOverlay(screen)
 }
 
 func (p *Play) Layout(w, h int) (int, int) {

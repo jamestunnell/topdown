@@ -67,17 +67,16 @@ func (ch *Character) WorldDraw(world *ebiten.Image, visible topdown.Rectangle[fl
 	maxY := ch.maxY()
 	minX := ch.Position.X - wFlt/2.0
 
-	worldArea := topdown.Rect(minX, maxY-hFlt, minX+wFlt, maxY)
+	rect := topdown.Rect(minX, maxY-hFlt, minX+wFlt, maxY)
 
-	if worldArea.Intersect(visible).Empty() {
+	if rect.Intersect(visible).Empty() {
 		return
 	}
 
-	// draw the image relative to the char position
-
 	op := &ebiten.DrawImageOptions{}
 
-	op.GeoM.Translate(float64(worldArea.Min.X), float64(worldArea.Min.Y))
+	// draw the image relative to the char position and visible area
+	op.GeoM.Translate(rect.Min.X-visible.Min.X, rect.Min.Y-visible.Min.Y)
 
 	world.DrawImage(img, op)
 }
