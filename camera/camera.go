@@ -188,13 +188,8 @@ func (c *camera) Translation(p topdown.Point[float64]) *ebiten.DrawImageOptions 
 
 func (c *camera) Blit(screen *ebiten.Image) {
 	op := &ebiten.DrawImageOptions{}
-	w, h := c.surface.Size()
-	cx := float64(w) / 2.0
-	cy := float64(h) / 2.0
 
-	op.GeoM.Translate(-cx, -cy)
 	op.GeoM.Scale(c.zoom, c.zoom)
-	op.GeoM.Translate(cx*c.zoom, cy*c.zoom)
 
 	screen.DrawImage(c.surface, op)
 }
