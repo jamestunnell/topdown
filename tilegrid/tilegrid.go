@@ -10,6 +10,7 @@ import (
 	"github.com/hajimehoshi/ebiten/v2"
 
 	"github.com/jamestunnell/topdown"
+	"github.com/jamestunnell/topdown/camera"
 	"github.com/jamestunnell/topdown/drawing"
 	"github.com/jamestunnell/topdown/mathutil"
 	"github.com/jamestunnell/topdown/resource"
@@ -156,11 +157,11 @@ func (tg *TileGrid) MakeRows(tiles map[string]*Tile) error {
 	return nil
 }
 
-func (tg *TileGrid) WorldLayer() int {
-	return drawing.LayerBackground
+func (tg *TileGrid) DrawLayer() int {
+	return drawing.LayerWorldBackground
 }
 
-func (tg *TileGrid) WorldSortValue() float64 {
+func (tg *TileGrid) DrawSortValue() float64 {
 	return tg.worldArea.Max.Y
 }
 
@@ -178,7 +179,9 @@ func (tg *TileGrid) VisibleRows(visible topdown.Rectangle[float64]) (int, int) {
 	return mathutil.Clamp(first, 0, tg.nRows-1), mathutil.Clamp(last, 0, tg.nRows-1)
 }
 
-func (tg *TileGrid) WorldDraw(worldSurface *ebiten.Image, visible topdown.Rectangle[float64]) {
+func (tg *TileGrid) Draw(screen *ebiten.Image, cam camera.Camera) {
+	visible := cam.WorldArea()
+
 	// skip drawing if there is no visible portion of the tile grid
 	if tg.worldArea.Intersect(visible).Empty() {
 		return
@@ -188,22 +191,29 @@ func (tg *TileGrid) WorldDraw(worldSurface *ebiten.Image, visible topdown.Rectan
 	firstColumn, lastColumn := tg.VisibleColumns(visible)
 	firstRow, lastRow := tg.VisibleRows(visible)
 
-	offset := tg.Origin.Sub(visible.Min)
+	origin, _ := cam.ConvertWorldToScreen(tg.Origin)
+	zoom := cam.ZoomLevel()
+	width := float64(tg.TileSize.Width) * zoom
+	height := float64(tg.TileSize.Height) * zoom
 
 	for row := firstRow; row <= lastRow; row++ {
 		for col := firstColumn; col <= lastColumn; col++ {
 			tile := tg.rows[row].Tiles[col]
 			opts := &ebiten.DrawImageOptions{}
-			tx := float64(col * tg.TileSize.Width)
-			ty := float64(row * tg.TileSize.Height)
 
-			if tile.XScale != 1 || tile.YScale != 1 {
-				opts.GeoM.Scale(tile.XScale, tile.YScale)
+			sx := zoom * tile.XScale
+			sy := zoom * tile.YScale
+
+			if sx != 1 || sy != 1 {
+				opts.GeoM.Scale(sx, sy)
 			}
 
-			opts.GeoM.Translate(tx+offset.X, ty+offset.Y)
+			minX := origin.X + float64(col)*width
+			minY := origin.Y + float64(row)*height
 
-			worldSurface.DrawImage(tile.Image, opts)
+			opts.GeoM.Translate(minX, minY)
+
+			screen.DrawImage(tile.Image, opts)
 		}
 	}
 }

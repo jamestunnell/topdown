@@ -27,6 +27,11 @@ func (r Rectangle[T]) Dy() T {
 	return r.Max.Y - r.Min.Y
 }
 
+// Size returns the rectangle center point.
+func (r Rectangle[T]) Center() Point[T] {
+	return Pt((r.Min.X+r.Max.X)/2.0, (r.Min.Y+r.Max.Y)/2.0)
+}
+
 // Size returns r's width and height.
 func (r Rectangle[T]) Size() Size[T] {
 	return Sz(r.Dx(), r.Dy())

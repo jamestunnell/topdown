@@ -2,41 +2,40 @@ package drawing
 
 import (
 	"github.com/hajimehoshi/ebiten/v2"
-	"github.com/jamestunnell/topdown"
+	"github.com/jamestunnell/topdown/camera"
 	"github.com/jamestunnell/topdown/sliceutil"
 	"golang.org/x/exp/slices"
 )
 
-// WorldLayer is used to organize the world into layers.
-type WorldLayer struct {
+type Layer struct {
 	order     int
 	ids       []string
-	drawables []WorldDrawable
+	drawables []Drawable
 }
 
-// NewWorldLayer makes a new world layer.
-func NewWorldLayer(order int) *WorldLayer {
-	return &WorldLayer{
+// NewLayer makes a new layer.
+func NewLayer(order int) *Layer {
+	return &Layer{
 		order:     order,
 		ids:       []string{},
-		drawables: []WorldDrawable{},
+		drawables: []Drawable{},
 	}
 }
 
 // Order gets the layer order.
-func (l *WorldLayer) Order() int {
+func (l *Layer) Order() int {
 	return l.order
 }
 
 // Add adds a drawable with ID.
-func (l *WorldLayer) Add(id string, d WorldDrawable) {
+func (l *Layer) Add(id string, d Drawable) {
 	l.ids = append(l.ids, id)
 	l.drawables = append(l.drawables, d)
 }
 
 // Remove removes the drawable with the given ID.
 // Returns true if removed.
-func (l *WorldLayer) Remove(id string) bool {
+func (l *Layer) Remove(id string) bool {
 	idx := slices.Index(l.ids, id)
 	if idx == -1 {
 		return false
@@ -49,21 +48,21 @@ func (l *WorldLayer) Remove(id string) bool {
 }
 
 // Clear removes all drawables.
-func (l *WorldLayer) Clear() {
+func (l *Layer) Clear() {
 	l.ids = nil
 	l.drawables = nil
 }
 
 // Draw draws the layer drawables in sorted order.
-func (l *WorldLayer) Draw(surface *ebiten.Image, visible topdown.Rectangle[float64]) {
+func (l *Layer) Draw(screen *ebiten.Image, cam camera.Camera) {
 	n := len(l.drawables)
 	order := sliceutil.Make(n, func(i int) int { return i })
 
 	slices.SortFunc(order, func(a, b int) bool {
-		return l.drawables[a].WorldSortValue() < l.drawables[b].WorldSortValue()
+		return l.drawables[a].DrawSortValue() < l.drawables[b].DrawSortValue()
 	})
 
 	for _, idx := range order {
-		l.drawables[idx].WorldDraw(surface, visible)
+		l.drawables[idx].Draw(screen, cam)
 	}
 }

@@ -9,7 +9,7 @@ import (
 )
 
 func TestBackgroundIsDrawable(t *testing.T) {
-	testBackgroundIs[drawing.WorldDrawable](t)
+	testBackgroundIs[drawing.Drawable](t)
 }
 
 func testBackgroundIs[T any](t *testing.T) {

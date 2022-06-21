@@ -21,14 +21,13 @@ import (
 type Play struct {
 	PlayerRef, WorldRef string
 
-	player         *Player
-	world          *World
-	cam            camera.Camera
-	worldDrawing   drawing.WorldSystem
-	overlayDrawing drawing.OverlaySystem
-	animation      animation.System
-	control        control.System
-	moveCollide    movecollide.System
+	player      *Player
+	world       *World
+	cam         camera.Camera
+	drawing     drawing.System
+	animation   animation.System
+	control     control.System
+	moveCollide movecollide.System
 
 	screenSize topdown.Size[int]
 }
@@ -58,8 +57,7 @@ func (p *Play) Initialize(screenSize topdown.Size[int], mgr resource.Manager) er
 	p.world = world
 	p.cam = cam
 
-	p.worldDrawing = drawing.NewWorldSystem(int(world.Size.Width), int(world.Size.Height))
-	p.overlayDrawing = drawing.NewOverlaySystem()
+	p.drawing = drawing.NewSystem(cam)
 	p.moveCollide = moveCollide
 	p.control = control.NewSystem()
 	p.animation = animation.NewSystem()
@@ -78,8 +76,7 @@ func (p *Play) Initialize(screenSize topdown.Size[int], mgr resource.Manager) er
 	for id, obj := range objs {
 		p.animation.Add(id, obj)
 		p.control.Add(id, obj)
-		p.worldDrawing.Add(id, obj)
-		p.overlayDrawing.Add(id, obj)
+		p.drawing.Add(id, obj)
 		p.moveCollide.Add(id, obj)
 	}
 
@@ -109,20 +106,10 @@ func (p *Play) Update() (engine.Mode, error) {
 }
 
 func (p *Play) Draw(screen *ebiten.Image) {
-	camSurface := p.cam.DrawSurface()
+	screen.Clear()
+	screen.Fill(color.Black)
 
-	// Clear camera surface
-	camSurface.Clear()
-	camSurface.Fill(color.Black)
-
-	visible := p.cam.WorldArea()
-
-	p.worldDrawing.DrawWorld(camSurface, visible)
-
-	// Draw camera to screen and zoom
-	p.cam.Blit(screen)
-
-	p.overlayDrawing.DrawOverlay(screen)
+	p.drawing.Draw(screen)
 }
 
 func (p *Play) Layout(w, h int) (int, int) {

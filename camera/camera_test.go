@@ -186,14 +186,12 @@ func testCameraConvertCoordsOK(
 	worldPos topdown.Point[float64],
 	screenPos topdown.Point[float64]) {
 	t.Run(name, func(t *testing.T) {
-		actualScreenPos, ok := cam.ConvertWorldToScreen(worldPos)
+		actualScreenPos, _ := cam.ConvertWorldToScreen(worldPos)
 
-		require.True(t, ok)
 		assert.Equal(t, screenPos, actualScreenPos)
 
-		actualWorldPos, ok := cam.ConvertScreenToWorld(screenPos)
+		actualWorldPos, _ := cam.ConvertScreenToWorld(screenPos)
 
-		require.True(t, ok)
 		assert.Equal(t, worldPos, actualWorldPos)
 	})
 }
@@ -203,8 +201,6 @@ func testCameraBasics(t *testing.T, tc *testCase) {
 		cam, err := camera.New(topdown.Sz(tc.Width, tc.Height))
 		require.NoError(t, err)
 
-		assert.NotNil(t, cam.DrawSurface())
-
 		cam.Move(tc.Position)
 		cam.Zoom(tc.Zoom)
 
@@ -213,8 +209,8 @@ func testCameraBasics(t *testing.T, tc *testCase) {
 
 		screenArea := cam.ScreenArea()
 
-		assert.Equal(t, tc.Width, screenArea.Dx())
-		assert.Equal(t, tc.Height, screenArea.Dy())
+		assert.Equal(t, float64(tc.Width), screenArea.Dx())
+		assert.Equal(t, float64(tc.Height), screenArea.Dy())
 
 		area := cam.WorldArea()
 

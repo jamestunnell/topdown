@@ -11,6 +11,7 @@ import (
 
 	"github.com/jamestunnell/topdown"
 	"github.com/jamestunnell/topdown/animation"
+	"github.com/jamestunnell/topdown/camera"
 	"github.com/jamestunnell/topdown/drawing"
 	"github.com/jamestunnell/topdown/resource"
 )
@@ -49,15 +50,15 @@ func (ch *Character) Initialize(mgr resource.Manager) error {
 	return nil
 }
 
-func (ch *Character) WorldLayer() int {
-	return drawing.LayerForeground
+func (ch *Character) DrawLayer() int {
+	return drawing.LayerWorldForeground
 }
 
-func (ch *Character) WorldSortValue() float64 {
+func (ch *Character) DrawSortValue() float64 {
 	return ch.maxY()
 }
 
-func (ch *Character) WorldDraw(world *ebiten.Image, visible topdown.Rectangle[float64]) {
+func (ch *Character) Draw(screen *ebiten.Image, cam camera.Camera) {
 	img := ch.Animations.Controller.CurrentFrameImage()
 	w, h := img.Size()
 	wFlt := float64(w)
@@ -68,17 +69,24 @@ func (ch *Character) WorldDraw(world *ebiten.Image, visible topdown.Rectangle[fl
 	minX := ch.Position.X - wFlt/2.0
 
 	rect := topdown.Rect(minX, maxY-hFlt, minX+wFlt, maxY)
+	visible := cam.WorldArea()
 
 	if rect.Intersect(visible).Empty() {
 		return
 	}
 
-	op := &ebiten.DrawImageOptions{}
+	opts := &ebiten.DrawImageOptions{}
+	zoom := cam.ZoomLevel()
 
-	// draw the image relative to the char position and visible area
-	op.GeoM.Translate(rect.Min.X-visible.Min.X, rect.Min.Y-visible.Min.Y)
+	if zoom != 1 {
+		opts.GeoM.Scale(zoom, zoom)
+	}
 
-	world.DrawImage(img, op)
+	min, _ := cam.ConvertWorldToScreen(rect.Min)
+
+	opts.GeoM.Translate(min.X, min.Y)
+
+	screen.DrawImage(img, opts)
 }
 
 func (ch *Character) UpdateAnimation(delta time.Duration) {
